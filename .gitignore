@@ -1,0 +1,64 @@
+#===============================================================================
+# .gitignore para flujo VCS + Verdi + URG (Synopsys)
+#===============================================================================
+
+# ---- VCS: artefactos de compilacion y simulacion ----
+**/csrc/
+**/simv
+**/simv.daidir/
+**/simv.vdb/
+**/simv.kdb
+**/ucli.key
+**/vc_hdrs.h
+**/vc_hdrs.c
+**/tr_db.log
+**/AN.DB/
+
+# ---- VCS: logs ----
+**/*.log
+**/compile.log
+**/sim_*.log
+**/cm.log
+**/novas_dump.log
+
+# ---- Verdi ----
+**/verdiLog/
+**/verdi_config_file
+**/verdi.cmd
+**/verdi.cmd.bak
+**/verdi.log
+**/novas.*
+**/vdCovLog/
+**/DVEfiles/
+
+# ---- Waveforms ----
+**/*.fsdb
+**/*.vpd
+**/*.vcd
+**/*.wlf
+**/*.shm/
+
+# ---- URG: reportes generados ----
+**/cov_report/
+**/cov_report_raw/
+**/urgReport/
+**/*.vdb.bk
+
+# ---- Sistema ----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ---- Editores ----
+.vscode/
+.idea/
+*.sublime-*
+
+# ---- Python (si scripts/ los usa) ----
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
