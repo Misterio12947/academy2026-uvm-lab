@@ -27,8 +27,7 @@ alu_verification/
 └── sim/
     ├── Makefile                # Flujo completo (compile / sim / cov / verdi)
     ├── filelist.f              # Lista de archivos para VCS
-    ├── cm_hier.cfg             # Filtro de instrumentacion (DUT + testbench)
-    └── alu_cov_excludes.el     # Waivers de coverage (holes unreachable-by-design)
+    └── cm_hier.cfg             # Filtro de instrumentacion (DUT + testbench)
 ```
 
 ## Uso
@@ -122,22 +121,22 @@ DUT. Estos son ruido de coverage y se filtran con `-cm_hier cm_hier.cfg`.
 
 ## Estrategia de waivers
 
-Los holes documentados se cierran con dos mecanismos:
+Los holes documentados se cierran con **pragmas `// VCS coverage off/on`**
+directamente en las regiones inalcanzables:
 
-- **`sim/alu_cov_excludes.el`**: exclusion file para el `default` del RTL.
-  Aplicado con `urg -elfile alu_cov_excludes.el`. Separa el waiver del codigo
-  fuente (politica estandar: no ensuciar RTL con constructos de verificacion).
+- **`rtl/alu.sv`**: alrededor del `default` del `unique case`. Aunque tocar
+  el RTL con constructos de verificacion no es ideal, los pragmas son solo
+  comentarios que no afectan sintesis y son la unica forma robusta de excluir
+  holes sin generar el `.el` interactivamente con Verdi.
 
-- **Pragmas `// VCS coverage off/on`** en `tb/testbench.sv`: excluye el
-  watchdog directamente en el fuente. Como es codigo de TB (no RTL), es
-  aceptable llevar pragmas de verificacion.
+- **`tb/testbench.sv`**: alrededor del `initial` del watchdog `uvm_fatal`.
+  Como es codigo de TB (no RTL), es completamente aceptable.
 
-Para regenerar el `.el` interactivamente:
-
-```bash
-make verdi
-# En Verdi: Coverage -> Exclude selected items -> File -> Save Exclusion File
-```
+Alternativa considerada y descartada: `alu_cov_excludes.el`. URG rechaza
+archivos de exclusion escritos a mano por dependencias de checksums e IDs
+internos que requieren Verdi interactivo para generarse correctamente. Los
+pragmas son 100% deterministicos, versionables y adyacentes al codigo que
+excluyen (mejor para revisiones).
 
 ## Notas de diseno del env
 

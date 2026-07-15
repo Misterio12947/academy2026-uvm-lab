@@ -62,3 +62,9 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+
+# ---- VCS: dotfiles ocultos de compilacion FSM/coverage ----
+**/.fsm.*
+**/.cov.*
+**/.vcs.*
+**/.*.verilog.xml

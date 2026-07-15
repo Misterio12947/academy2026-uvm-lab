@@ -71,11 +71,17 @@ module ALU #(
                     zero  = 1'b1;
                     error = 1'b0;
                 end
+                // VCS coverage off
+                // Default unreachable-by-design: opcode 3-bit enumerado
+                // completo (8/8 patrones). Existe como practica defensiva
+                // contra corrupcion de X. No cuenta en coverage porque no se
+                // ejecuta en 2-estados con opcode valido.
                 default: begin
                     out   = MINUS_ONE;
                     zero  = 1'b0;
                     error = 1'b1;
                 end
+                // VCS coverage on
             endcase
         end
     end

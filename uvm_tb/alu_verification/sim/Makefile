@@ -55,20 +55,14 @@ sim:
 	./simv $(SIM_FLAGS) -l sim_$(TEST).log
 	@echo "=== Simulacion terminada. Ver sim_$(TEST).log ==="
 
-# Exclusion file para holes unreachable-by-design
-ELFILE = alu_cov_excludes.el
-
-# Genera reporte HTML de coverage con waivers aplicados
+# Genera reporte HTML de coverage.
+# Los holes unreachable-by-design se excluyen via pragmas VCS coverage off/on
+# directamente en el RTL (rtl/alu.sv, default del case) y en el testbench
+# (tb/testbench.sv, watchdog).
 cov:
-	@echo "=== Generando reporte de cobertura con URG + waivers ==="
-	urg -dir simv.vdb -format both -report cov_report -elfile $(ELFILE)
+	@echo "=== Generando reporte de cobertura con URG ==="
+	urg -dir simv.vdb -format both -report cov_report
 	@echo "=== Reporte HTML en: cov_report/dashboard.html ==="
-
-# Reporte sin waivers (para revisar holes en crudo)
-cov_raw:
-	@echo "=== Generando reporte de cobertura SIN waivers ==="
-	urg -dir simv.vdb -format both -report cov_report_raw
-	@echo "=== Reporte HTML en: cov_report_raw/dashboard.html ==="
 
 # Abre Verdi con la base de coverage para exploracion interactiva
 verdi:
@@ -84,7 +78,7 @@ regress:
 
 clean:
 	rm -rf simv simv.daidir simv.vdb csrc ucli.key \
-	       *.log *.fsdb *.vpd cov_report cov_report_raw \
+	       *.log *.fsdb *.vpd cov_report \
 	       verdiLog novas.* vdCovLog vc_hdrs.h
 
 help:
