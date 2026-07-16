@@ -1,0 +1,55 @@
+<session version="1.1" release="V-2023.12-SP2-8" timestp="2026-07-16 17:11:20 GMT">
+  <info>
+    <attr name="datetime" value="Thu Jul 16 11:20:55 2026
+"/>
+    <attr name="command" value="urg -dir simv.vdb -format text -verbose -report cov_report_verbose"/>
+    <attr name="top_instance" value="uvm_custom_install_recording,testbench,uvm_custom_install_verdi_recording,uvm_pkg"/>
+  </info>
+  <hvp>
+    <datadef>
+      <metdef name="Line" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Cond" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Toggle" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="FSM" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Branch" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Assert" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Group" type="percent" aggregator="average" builtin="1" />
+    </datadef>
+  </hvp>
+  <old_coverage>
+  <scope type="top" name="top">
+    <metric name="Line" value="11/11" />
+    <metric name="Toggle" value="40/40" />
+    <metric name="Branch" value="3/3" />
+    <metric name="Assert" value="1/3" />
+    <metric name="Group" value="94.1667%" />
+  </scope>
+  <scope type="instance" name="top">
+  </scope>
+  <scope type="group" name="top">
+    <scope type="group" name="regbank_pkg::regbank_coverage::cg_transitions">
+      <metric name="Group" value="87.5%" />
+    </scope>
+    <scope type="group" name="regbank_pkg::regbank_coverage::cg_regbank">
+      <metric name="Group" value="95%" />
+    </scope>
+    <scope type="group" name="regbank_pkg::regbank_coverage::cg_hold_duration">
+      <metric name="Group" value="100%" />
+    </scope>
+  </scope>
+  <scope type="assert" name="Statistics">
+    <scorelist type="total" name="Design Hierarchy Assert">
+      <score name="Assert" value="1/3" />
+      <score name="Score" value="33.33" />
+    </scorelist>
+    <scorelist type="total" name="Module List Assert">
+      <score name="Assert" value="1/3" />
+      <score name="Score" value="33.33" />
+    </scorelist>
+    <scorelist type="total" name="Assertion">
+      <score name="Assert" value="1/3" />
+      <score name="Score" value="33.33" />
+    </scorelist>
+  </scope>
+  </old_coverage>
+</session>

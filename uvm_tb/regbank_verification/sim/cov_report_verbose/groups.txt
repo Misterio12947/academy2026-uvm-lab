@@ -1,0 +1,14 @@
+Testbench Group List
+
+Total Groups Coverage Summary 
+SCORE  INST SCORE WEIGHT 
+ 94.17  94.17     1      
+
+
+Total groups in report: 3
+-------------------------------------------------------------------------------
+SCORE  INSTANCES WEIGHT GOAL   AT LEAST PER INSTANCE AUTO BIN MAX PRINT MISSING COMMENT NAME                                            
+ 87.50  87.50    1      100    1        1            64           64                    regbank_pkg::regbank_coverage::cg_transitions   
+ 95.00  95.00    1      100    1        1            64           64                    regbank_pkg::regbank_coverage::cg_regbank       
+100.00 100.00    1      100    1        1            64           64                    regbank_pkg::regbank_coverage::cg_hold_duration 
+

@@ -49,13 +49,65 @@ class regbank_driver extends uvm_driver#(regbank_transaction);
         @(vif.drv_cb);
     endtask
 
-    // Reset mid-sequence: >= 2 ciclos para garantizar visibilidad en edge
+    // Toggle para alternar modos de reset entre dirty y clean.
+    // Ambos modos ejercitan bins distintos del coverage: dirty cubre
+    // 'reset_write' (cp_action) via el NBA delay del wr_en; clean cubre
+    // 'write_to_reset' y 'reset_to_write' (cp_transitions) via
+    // asignaciones inmediatas que evitan el ciclo intermedio.
+    bit reset_mode_toggle = 1'b0;
+
     task inject_reset();
+        reset_mode_toggle = ~reset_mode_toggle;
+        if (reset_mode_toggle)
+            inject_reset_dirty();
+        else
+            inject_reset_clean();
+    endtask
+
+    // Reset "dirty": rst=1 inmediato pero wr_en via NBA (con output #1).
+    // Si el estado previo era write (wr_en=1), el sample del primer edge
+    // ve (wr_en=1, rst=1) = reset_write, cubriendo ese bin de cp_action.
+    task inject_reset_dirty();
         vif.rst = 1'b1;
         vif.drv_cb.wr_en <= 1'b0;
         repeat (2) @(vif.drv_cb);
         vif.rst = 1'b0;
         @(vif.drv_cb);
+    endtask
+
+    // Reset "clean": wr_en y rst se asignan de forma INMEDIATA (bypasean
+    // el clocking block) para eliminar la ventana intermedia de reset_write.
+    // Cubre write_to_reset (si prev=write) porque el sample ve directamente
+    // (wr_en=0, rst=1) = reset_only sin pasar por (11).
+    // Al final, sube wr_en tambien inmediato para que el sig. sample vea
+    // (wr_en=1, rst=0) = write, cubriendo reset_to_write.
+    //
+    // Fases intermedias adicionales fuerzan un sample de reset_write (11)
+    // aunque el modo dirty no lo produzca de forma consistente en VCS.
+    // Con esto el bin reset_write se cubre deterministicamente en cada
+    // llamada de modo clean.
+    task inject_reset_clean();
+        vif.wr_en = 1'b0;
+        vif.rst   = 1'b1;
+        @(vif.drv_cb);        // sample: (0, 1) = reset_only.
+                              // Trans prev->reset_only: write_to_reset o hold_to_reset.
+
+        // Fase forzada: subir wr_en durante rst=1 para producir reset_write.
+        vif.wr_en = 1'b1;
+        @(vif.drv_cb);        // sample: (1, 1) = reset_write. Cubre cp_action.reset_write
+                              // y cx_wr_en_rst[high][high] deterministicamente.
+
+        // Regresar a reset_only para continuar el flow del clean reset.
+        vif.wr_en = 1'b0;
+        @(vif.drv_cb);        // sample: (0, 1) = reset_only.
+
+        // Cierre del clean reset: rst=0 + wr_en=1 inmediato para reset_to_write.
+        vif.rst   = 1'b0;
+        vif.wr_en = 1'b1;
+        @(vif.drv_cb);        // sample: (1, 0) = write. Trans reset_only->write = reset_to_write.
+
+        vif.wr_en = 1'b0;     // Regresa a estado neutro para el proximo item.
+        @(vif.drv_cb);        // sample: (0, 0) = hold.
     endtask
 
     // Escritura sincrona via clocking block

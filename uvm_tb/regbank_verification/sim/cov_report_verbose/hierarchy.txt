@@ -1,0 +1,15 @@
+Design Hierarchy
+
+
+----------------
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT           
+100.00 100.00 --     100.00 --     100.00 --     testbench 
+  
+  ----------------
+  SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT     
+  100.00 100.00 --     100.00 --     100.00 --     dut 
+
+----------------
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT         
+ 33.33 --     --     --     --     --      33.33 uvm_pkg 
+

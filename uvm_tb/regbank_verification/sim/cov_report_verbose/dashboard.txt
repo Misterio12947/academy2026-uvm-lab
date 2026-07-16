@@ -1,0 +1,35 @@
+Dashboard
+
+Date: Thu Jul 16 11:20:55 2026
+
+User: cesar.otamendi.v
+
+Version: V-2023.12-SP2-8
+Command line: urg -dir simv.vdb -format text -verbose -report cov_report_verbose 
+
+Number of tests: 4
+
+-------------------------------------------------------------------------------
+Total Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT GROUP  
+ 85.50 100.00 --     100.00 --     100.00  33.33  94.17 
+
+
+-------------------------------------------------------------------------------
+Hierarchical coverage data for top-level instances 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME      
+100.00 100.00 --     100.00 --     100.00 --     testbench 
+ 33.33 --     --     --     --     --      33.33 uvm_pkg   
+
+
+-------------------------------------------------------------------------------
+Total Module Definition Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+ 83.33 100.00 --     100.00 --     100.00  33.33 
+
+
+-------------------------------------------------------------------------------
+Total Groups Coverage Summary 
+SCORE  INST SCORE WEIGHT 
+ 94.17  94.17     1      
+

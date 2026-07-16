@@ -1,0 +1,14 @@
+Design Module List
+
+Total Module Definition Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+ 83.33 100.00 --     100.00 --     100.00  33.33 
+
+
+Total modules in report: 3
+-------------------------------------------------------------------------------
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME          
+ 33.33 --     --     --     --     --      33.33 uvm_pkg       
+100.00 100.00 --     100.00 --     100.00 --     register_bank 
+100.00 100.00 --     100.00 --     --     --     testbench     
+

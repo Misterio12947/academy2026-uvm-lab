@@ -1,0 +1,320 @@
+===============================================================================
+Module : uvm_pkg
+===============================================================================
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+ 33.33 --     --     --     --     --      33.33 
+
+Source File(s) : 
+
+/home/synopsys/syn/V-2023.12/vcs/V-2023.12-SP2-8//etc/uvm-1.2/uvm_pkg.sv
+
+Module self-instances :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME    
+ 33.33 --     --     --     --     --      33.33 uvm_pkg 
+
+
+
+-------------------------------------------------------------------------------
+Assert Coverage for Module : uvm_pkg
+                 Total Attempted Percent Succeeded/Matched Percent 
+Assertions       3     1         33.33   1                 33.33   
+Cover properties 0     0                 0                         
+Cover sequences  0     0                 0                         
+Total            3     1         33.33   1                 33.33   
+
+
+
+-------------------------------------------------------------------------------
+
+Assertion Details
+
+Name                                                  Attempts Real Successes Failures Incomplete 
+\uvm_component_name_check_visitor::visit .unnamed$$_0 108      108            0        0          
+\uvm_reg_map::do_read .unnamed$$_0.unnamed$$_1        0        0              0        0          
+\uvm_reg_map::do_write .unnamed$$_0.unnamed$$_1       0        0              0        0          
+
+
+-------------------------------------------------------------------------------
+===============================================================================
+Module Instance : uvm_pkg
+===============================================================================
+
+Instance :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+ 33.33 --     --     --     --     --      33.33 
+
+
+Instance's subtree :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+ 33.33 --     --     --     --     --      33.33 
+
+
+Module : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME    
+ 33.33 --     --     --     --     --      33.33 uvm_pkg 
+
+
+Parent : 
+
+none
+----------------
+
+
+Subtrees :
+
+
+no children
+----------------
+
+
+-------------------------------------------------------------------------------
+Since this is the module's only instance, the coverage report is the same as for the module.
+===============================================================================
+Module : register_bank
+===============================================================================
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+100.00 100.00 --     100.00 --     100.00 --     
+
+Source File(s) : 
+
+/home/cesar.otamendi.v/Isolated/Academy2026/project/uvm_tb/regbank_verification/sim/../rtl/register_bank.sv
+
+Module self-instances :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME          
+100.00 100.00 --     100.00 --     100.00 --     testbench.dut 
+
+
+
+-------------------------------------------------------------------------------
+Line Coverage for Module : register_bank
+
+             Line No.   Total   Covered  Percent
+TOTAL                        4        4   100.00
+ALWAYS             19        4        4   100.00
+
+18                          always_ff @(posedge clk or posedge rst) begin
+19         1/1                  if (rst)
+20         1/1                      out <= '0;             // Reset asincrono domina sobre wr_en
+21         1/1                  else if (wr_en)
+22         1/1                      out <= in;             // Captura en flanco de clk
+                        MISSING_ELSE
+
+-------------------------------------------------------------------------------
+Toggle Coverage for Module : register_bank
+                Total Covered Percent 
+Totals          5     5       100.00  
+Total Bits      38    38      100.00  
+Total Bits 0->1 19    19      100.00  
+Total Bits 1->0 19    19      100.00  
+
+                            
+Ports          5  5  100.00 
+Port Bits      38 38 100.00 
+Port Bits 0->1 19 19 100.00 
+Port Bits 1->0 19 19 100.00 
+
+Port Details
+         Toggle Toggle 1->0 Toggle 0->1 Direction 
+clk      Yes    Yes         Yes         INPUT     
+rst      Yes    Yes         Yes         INPUT     
+wr_en    Yes    Yes         Yes         INPUT     
+in[7:0]  Yes    Yes         Yes         INPUT     
+out[7:0] Yes    Yes         Yes         OUTPUT    
+
+
+-------------------------------------------------------------------------------
+Branch Coverage for Module : register_bank
+         Line No. Total Covered Percent 
+Branches          3     3       100.00  
+IF       19       3     3       100.00  
+
+
+19                 if (rst)
+                   -1-  
+20                     out <= '0;             // Reset asincrono domina sobre wr_en
+                       ==>
+21                 else if (wr_en)
+                        -2-  
+22                     out <= in;             // Captura en flanco de clk
+                       ==>
+                       MISSING_ELSE
+                       ==>
+
+Branches:
+
+-1- -2- Status  
+1   -   Covered 
+0   1   Covered 
+0   0   Covered 
+
+
+-------------------------------------------------------------------------------
+===============================================================================
+Module Instance : testbench.dut
+===============================================================================
+
+Instance :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+100.00 100.00 --     100.00 --     100.00 --     
+
+
+Instance's subtree :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+100.00 100.00 --     100.00 --     100.00 --     
+
+
+Module : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME          
+100.00 100.00 --     100.00 --     100.00 --     register_bank 
+
+
+Parent : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME      
+100.00 100.00 --     100.00 --     --     --     testbench 
+
+
+Subtrees :
+
+
+no children
+----------------
+
+
+-------------------------------------------------------------------------------
+Since this is the module's only instance, the coverage report is the same as for the module.
+===============================================================================
+Module : testbench
+===============================================================================
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+100.00 100.00 --     100.00 --     --     --     
+
+Source File(s) : 
+
+/home/cesar.otamendi.v/Isolated/Academy2026/project/uvm_tb/regbank_verification/sim/../tb/testbench.sv
+
+Module self-instances :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME      
+100.00 100.00 --     100.00 --     --     --     testbench 
+
+
+
+-------------------------------------------------------------------------------
+Line Coverage for Module : testbench
+
+             Line No.   Total   Covered  Percent
+TOTAL                        7        7   100.00
+INITIAL            14        1        1   100.00
+ALWAYS             15        2        2   100.00
+INITIAL            30        2        2   100.00
+INITIAL            36        2        2   100.00
+INITIAL            43        0        0
+
+13                          logic clk;
+14         1/1              initial clk = 1'b0;
+15         2/2              always #5 clk = ~clk;
+16                      
+17                          // Interface
+18                          regbank_if #(.WIDTH(WIDTH)) rb_vif (.clk(clk));
+19                      
+20                          // DUT
+21                          register_bank #(.WIDTH(WIDTH)) dut (
+22                              .clk   (clk),
+23                              .rst   (rb_vif.rst),
+24                              .wr_en (rb_vif.wr_en),
+25                              .in    (rb_vif.in),
+26                              .out   (rb_vif.out)
+27                          );
+28                      
+29                          initial begin
+30         1/1                  uvm_config_db#(virtual regbank_if)::set(null, "uvm_test_top.env.agent*", "vif", rb_vif);
+31         1/1                  run_test();
+32                          end
+33                      
+34                          // Dump para Verdi
+35                          initial begin
+36         1/1                  $fsdbDumpfile("waves.fsdb");
+37         1/1                  $fsdbDumpvars(0, testbench);
+38                          end
+39                      
+40                          // Watchdog
+41                          // VCS coverage off
+42                          initial begin
+43         unreachable          #500us;
+44         unreachable          `uvm_fatal("TB", "Watchdog: la simulacion excedio 500us")
+uvm_fatal("TB", "Watchdog: la simulacion excedio 500us"):
+44.1                    `ifdef ZEMI4UVM 
+44.2                          (* zemi4_uvm_attribute=1 *) 
+44.3                       `endif 
+44.4                       begin 
+44.5       unreachable       if (uvm_report_enabled(UVM_NONE,UVM_FATAL,"TB")) 
+44.6       unreachable         uvm_report_fatal ("TB", "Watchdog: la simulacion excedio 500us", UVM_NONE, "../tb/testbench.sv", 44, "", 1); 
+44.7                       end
+                   ==>  MISSING_ELSE
+
+-------------------------------------------------------------------------------
+Toggle Coverage for Module : testbench
+                Total Covered Percent 
+Totals          1     1       100.00  
+Total Bits      2     2       100.00  
+Total Bits 0->1 1     1       100.00  
+Total Bits 1->0 1     1       100.00  
+
+                            
+Signals          1 1 100.00 
+Signal Bits      2 2 100.00 
+Signal Bits 0->1 1 1 100.00 
+Signal Bits 1->0 1 1 100.00 
+
+Signal Details
+    Toggle Toggle 1->0 Toggle 0->1 
+clk Yes    Yes         Yes         
+
+
+-------------------------------------------------------------------------------
+===============================================================================
+Module Instance : testbench
+===============================================================================
+
+Instance :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+100.00 100.00 --     100.00 --     --     --     
+
+
+Instance's subtree :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT 
+100.00 100.00 --     100.00 --     100.00 --     
+
+
+Module : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME      
+100.00 100.00 --     100.00 --     --     --     testbench 
+
+
+Parent : 
+
+none
+----------------
+
+
+Subtrees :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH ASSERT NAME 
+100.00 100.00 --     100.00 --     100.00 --     dut  
+
+
+
+-------------------------------------------------------------------------------
+Since this is the module's only instance, the coverage report is the same as for the module.

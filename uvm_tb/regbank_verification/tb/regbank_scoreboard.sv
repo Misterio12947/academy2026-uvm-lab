@@ -58,15 +58,20 @@ class regbank_scoreboard extends uvm_scoreboard;
     endfunction
 
     function void write_regbank(regbank_transaction tr);
-        bit [WIDTH-1:0] expected;
+        bit [WIDTH-1:0] current_expected;
 
-        // Predice el estado que el DUT debio calcular en este edge
-        expected = predict(model_reg, tr.rst, tr.wr_en, tr.in);
+        // Estado esperado para este edge:
+        //   - Si rst=1, el reset asincrono YA forzo out=0 (fuera de flanco,
+        //     independiente del estado previo del modelo). El scoreboard tiene
+        //     que reconocer este efecto antes de comparar.
+        //   - Si rst=0, el estado esperado es lo que predijimos en la iteracion
+        //     previa (model_reg).
+        current_expected = tr.rst ? '0 : model_reg;
 
         // Warmup: sincroniza el modelo sin verificar
         if (num_warmup < WARMUP_CYCLES) begin
             num_warmup++;
-            model_reg = expected;
+            model_reg = predict(model_reg, tr.rst, tr.wr_en, tr.in);
             `uvm_info("SCB",
                 $sformatf("WARMUP %0d/%0d | rst=%0b wr_en=%0b in=%0h -> out=%0h",
                     num_warmup, WARMUP_CYCLES, tr.rst, tr.wr_en, tr.in, tr.out),
@@ -76,11 +81,13 @@ class regbank_scoreboard extends uvm_scoreboard;
 
         num_checked++;
 
-        if (tr.out !== expected) begin
+        // Comparar tr.out (observado) vs current_expected (predicho con
+        // semantica de reset async ya aplicada)
+        if (tr.out !== current_expected) begin
             num_errors++;
             `uvm_error("SCB",
-                $sformatf("MISMATCH | rst=%0b wr_en=%0b in=%0h || DUT: out=%0h || REF: expected=%0h (prev_state=%0h)",
-                    tr.rst, tr.wr_en, tr.in, tr.out, expected, model_reg))
+                $sformatf("MISMATCH | rst=%0b wr_en=%0b in=%0h || DUT: out=%0h || REF: expected=%0h",
+                    tr.rst, tr.wr_en, tr.in, tr.out, current_expected))
         end
         else begin
             `uvm_info("SCB",
@@ -89,8 +96,9 @@ class regbank_scoreboard extends uvm_scoreboard;
                 UVM_HIGH)
         end
 
-        // Avanza el estado del modelo para la proxima tx
-        model_reg = expected;
+        // Avanzar el modelo para el proximo edge (predict ya incluye la
+        // logica de reset internamente)
+        model_reg = predict(model_reg, tr.rst, tr.wr_en, tr.in);
     endfunction
 
     function void report_phase(uvm_phase phase);
