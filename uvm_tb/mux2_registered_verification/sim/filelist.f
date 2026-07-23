@@ -1,9 +1,16 @@
-// Dependencias RTL (referencia single-source-of-truth a otros bloques)
+// Directorios de includes
++incdir+../tb
++incdir+../rtl
+
+// Dependencias RTL (single source of truth)
 ../../mux2_verification/rtl/mux2.sv
 ../../regbank_verification/rtl/register_bank.sv
 
 // RTL del bloque
 ../rtl/mux2_registered.sv
 
-// TB
-tb_mux2_registered.sv
+// Verificacion
+../tb/mux2_registered_if.sv
+../tb/mux2_registered_pkg.sv
+../tb/mux2_registered_test_pkg.sv
+../tb/testbench.sv
