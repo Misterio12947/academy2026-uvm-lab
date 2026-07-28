@@ -1,7 +1,6 @@
 //------------------------------------------------------------------------------
 // alu_scoreboard.sv
-// Scoreboard con reference model. Predice out/zero/error segun spec del lab
-// y compara contra lo observado por el monitor.
+// Reference model per encoding one-hot. Predice out/zero/error y compara.
 //------------------------------------------------------------------------------
 `uvm_analysis_imp_decl(_alu)
 
@@ -10,6 +9,15 @@ class alu_scoreboard extends uvm_scoreboard;
     `uvm_component_utils(alu_scoreboard)
 
     uvm_analysis_imp_alu#(alu_transaction, alu_scoreboard) ap_imp;
+
+    // Encoding one-hot (matches RTL)
+    localparam logic [3:0] OP_NOP = 4'b0000;
+    localparam logic [3:0] OP_ADD = 4'b0001;
+    localparam logic [3:0] OP_SUB = 4'b0010;
+    localparam logic [3:0] OP_MUL = 4'b0100;
+    localparam logic [3:0] OP_DIV = 4'b1000;
+
+    localparam logic [2*WIDTH-1:0] MINUS_ONE = {(2*WIDTH){1'b1}};
 
     int unsigned num_checked;
     int unsigned num_errors;
@@ -25,48 +33,55 @@ class alu_scoreboard extends uvm_scoreboard;
         num_errors  = 0;
     endfunction
 
-    // Reference model: replica exacta de la spec del ALU
-    function void predict(input  bit [WIDTH-1:0]   in1,
-                          input  bit [WIDTH-1:0]   in2,
-                          input  bit [3:0]         op,
-                          input  bit               invalid_data,
-                          output bit [2*WIDTH-1:0] exp_out,
-                          output bit               exp_zero,
-                          output bit               exp_error);
-        bit [2*WIDTH-1:0] minus_one;
-        minus_one = {(2*WIDTH){1'b1}};
-
+    // Reference model: replica exacta de la logica del RTL
+    function void predict(input  bit [WIDTH-1:0]     i1, i2,
+                          input  bit [3:0]           op,
+                          input  bit                 invalid_data,
+                          output bit [2*WIDTH-1:0]   exp_out,
+                          output bit                 exp_zero,
+                          output bit                 exp_error);
         exp_out   = '0;
         exp_zero  = 1'b0;
         exp_error = 1'b0;
 
         if (invalid_data) begin
             exp_error = 1'b1;
-            exp_out   = minus_one;
+            exp_out   = MINUS_ONE;
             exp_zero  = 1'b0;
         end
         else begin
-            case (op[2:0])
-                3'b000: begin exp_out = in1 + in2;   exp_zero = (exp_out == '0); end // ADD
-                3'b001: begin exp_out = in1 - in2;   exp_zero = (exp_out == '0); end // SUB
-                3'b010: begin exp_out = in1 * in2;   exp_zero = (exp_out == '0); end // MUL
-                3'b011: begin                                                        // DIV
-                    if (in2 == '0) begin
+            case (op)
+                OP_NOP: begin
+                    exp_out   = '0;
+                    exp_zero  = 1'b1;
+                    exp_error = 1'b0;
+                end
+                OP_ADD: begin
+                    exp_out  = i1 + i2;
+                    exp_zero = (exp_out == '0);
+                end
+                OP_SUB: begin
+                    exp_out  = i1 - i2;
+                    exp_zero = (exp_out == '0);
+                end
+                OP_MUL: begin
+                    exp_out  = i1 * i2;
+                    exp_zero = (exp_out == '0);
+                end
+                OP_DIV: begin
+                    if (i2 == '0) begin
                         exp_error = 1'b1;
-                        exp_out   = minus_one;
+                        exp_out   = MINUS_ONE;
                         exp_zero  = 1'b0;
                     end
                     else begin
-                        exp_out  = in1 / in2;
+                        exp_out  = i1 / i2;
                         exp_zero = (exp_out == '0);
                     end
                 end
-                3'b101,                                                             // LOAD
-                3'b110: begin exp_out = in2;         exp_zero = (exp_out == '0); end // STORE
-                3'b100,                                                             // NOP
-                3'b111: begin exp_out = '0;          exp_zero = 1'b1;            end // NOP
                 default: begin
-                    exp_out   = minus_one;
+                    // op multi-hot: se trata como error de codificacion
+                    exp_out   = MINUS_ONE;
                     exp_zero  = 1'b0;
                     exp_error = 1'b1;
                 end
@@ -87,15 +102,15 @@ class alu_scoreboard extends uvm_scoreboard;
         if ((tr.out !== exp_out) || (tr.zero !== exp_zero) || (tr.error !== exp_error)) begin
             num_errors++;
             `uvm_error("SCB",
-                $sformatf("MISMATCH | in1=%0h in2=%0h op=%0b invalid=%0b || DUT: out=%0h zero=%0b err=%0b || REF: out=%0h zero=%0b err=%0b",
-                    tr.in1, tr.in2, tr.op, tr.invalid_data,
-                    tr.out,  tr.zero,  tr.error,
+                $sformatf("MISMATCH | op=%04b in1=%0h in2=%0h invalid=%0b || DUT: out=%0h zero=%0b error=%0b || REF: exp_out=%0h exp_zero=%0b exp_error=%0b",
+                    tr.op, tr.in1, tr.in2, tr.invalid_data,
+                    tr.out, tr.zero, tr.error,
                     exp_out, exp_zero, exp_error))
         end
         else begin
             `uvm_info("SCB",
-                $sformatf("MATCH    | in1=%0h in2=%0h op=%0b invalid=%0b -> out=%0h zero=%0b err=%0b",
-                    tr.in1, tr.in2, tr.op, tr.invalid_data,
+                $sformatf("MATCH    | op=%04b in1=%0h in2=%0h -> out=%0h zero=%0b error=%0b",
+                    tr.op, tr.in1, tr.in2,
                     tr.out, tr.zero, tr.error),
                 UVM_HIGH)
         end

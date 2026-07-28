@@ -16,7 +16,7 @@ UVM_VERB  ?= UVM_MEDIUM
 
 COV_FLAGS = -cm line+cond+fsm+tgl+branch+assert
 COV_NAME  = -cm_name $(TEST) -cm_dir simv.vdb
-COV_HIER  = -cm_hier cm_hier.cfg
+COV_HIER  = -cm_hier cm_hier.cfg -cm_assert_hier cm_hier.cfg
 
 VCS_FLAGS = -full64 -sverilog -debug_access+all -kdb \
             -ntb_opts uvm-1.2 \

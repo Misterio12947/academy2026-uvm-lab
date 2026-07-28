@@ -1,29 +1,32 @@
 //------------------------------------------------------------------------------
 // alu_directed_seq.sv
-// Sequence directed con casos borde derivados de la spec:
-//   - Cada opcode aritmetico basico (ADD, SUB, MUL, DIV)
-//   - ADD y SUB que dan zero
-//   - DIV por cero -> error, out = -1
-//   - invalid_data asertado -> error, out = -1
-//   - NOP0, NOP1
-//   - LOAD, STORE (pass-through de in2)
+// Directed cases: cada operacion con valores extremos, div-by-zero,
+// invalid_data en cada op, y NOP pasivo. Adaptado a encoding one-hot.
 //------------------------------------------------------------------------------
 class alu_directed_seq extends uvm_sequence#(alu_transaction);
 
     `uvm_object_utils(alu_directed_seq)
 
+    // Encoding one-hot (helpers)
+    localparam logic [3:0] OP_NOP = 4'b0000;
+    localparam logic [3:0] OP_ADD = 4'b0001;
+    localparam logic [3:0] OP_SUB = 4'b0010;
+    localparam logic [3:0] OP_MUL = 4'b0100;
+    localparam logic [3:0] OP_DIV = 4'b1000;
+
     function new(string name = "alu_directed_seq");
         super.new(name);
     endfunction
 
-    task send(bit [WIDTH-1:0] a, bit [WIDTH-1:0] b, bit [2:0] opc, bit inv);
+    task send(bit [WIDTH-1:0] i1, i2,
+              bit [3:0]       op_val,
+              bit             inv);
         alu_transaction req = alu_transaction::type_id::create("req");
         start_item(req);
         if (!req.randomize() with {
-            in1          == a;
-            in2          == b;
-            op[2:0]      == opc;
-            op[3]        == 1'b0;
+            in1          == i1;
+            in2          == i2;
+            op           == op_val;
             invalid_data == inv;
         })
             `uvm_error("SEQ", "randomize() fallo en directed")
@@ -31,30 +34,40 @@ class alu_directed_seq extends uvm_sequence#(alu_transaction);
     endtask
 
     task body();
-        // Aritmeticos basicos
-        send(8'h05, 8'h03, 3'b000, 1'b0); // ADD 5 + 3
-        send(8'h10, 8'h01, 3'b001, 1'b0); // SUB 16 - 1
-        send(8'h0F, 8'h0F, 3'b010, 1'b0); // MUL 15 * 15
-        send(8'h20, 8'h04, 3'b011, 1'b0); // DIV 32 / 4
+        // === ADD: valores canonicos y bordes ===
+        send(8'h05, 8'h03, OP_ADD, 1'b0);   // 5+3=8
+        send(8'h00, 8'h00, OP_ADD, 1'b0);   // 0+0=0 (zero=1)
+        send(8'hFF, 8'h01, OP_ADD, 1'b0);   // 255+1=256 (verifica 2*WIDTH)
+        send(8'hFF, 8'hFF, OP_ADD, 1'b0);   // 255+255=510
 
-        // Casos borde de zero flag
-        send(8'h00, 8'h00, 3'b000, 1'b0); // ADD que da zero
-        send(8'h05, 8'h05, 3'b001, 1'b0); // SUB que da zero
+        // === SUB ===
+        send(8'h10, 8'h01, OP_SUB, 1'b0);   // 16-1=15
+        send(8'h05, 8'h05, OP_SUB, 1'b0);   // 5-5=0 (zero=1)
+        send(8'h00, 8'h01, OP_SUB, 1'b0);   // 0-1 (underflow, salida en complemento)
 
-        // Casos borde de error
-        send(8'hAA, 8'h00, 3'b011, 1'b0); // DIV por cero -> error, out=-1
-        send(8'h55, 8'hAA, 3'b011, 1'b1); // invalid_data -> error, out=-1
+        // === MUL: bordes de 2*WIDTH ===
+        send(8'h10, 8'h10, OP_MUL, 1'b0);   // 16*16=256
+        send(8'hFF, 8'hFF, OP_MUL, 1'b0);   // 255*255=65025 (verifica dout_high)
+        send(8'h00, 8'hFF, OP_MUL, 1'b0);   // 0*x=0
+        send(8'h01, 8'hFF, OP_MUL, 1'b0);   // 1*255=255
 
-        // NOPs y LOAD/STORE
-        send(8'hDE, 8'hAD, 3'b100, 1'b0); // NOP0
-        send(8'hDE, 8'hAD, 3'b111, 1'b0); // NOP1
-        send(8'h00, 8'h42, 3'b101, 1'b0); // LOAD  -> out = 8'h42
-        send(8'h00, 8'h00, 3'b110, 1'b0); // STORE -> out = 0, zero=1
+        // === DIV: normales y por cero ===
+        send(8'h20, 8'h04, OP_DIV, 1'b0);   // 32/4=8
+        send(8'hFF, 8'h01, OP_DIV, 1'b0);   // 255/1=255
+        send(8'h00, 8'h01, OP_DIV, 1'b0);   // 0/1=0 (zero=1)
+        send(8'hAA, 8'h00, OP_DIV, 1'b0);   // div por cero -> error, out=-1
+        send(8'hFF, 8'h00, OP_DIV, 1'b0);   // div por cero
 
-        // Valores maximos y minimos
-        send(8'hFF, 8'hFF, 3'b000, 1'b0); // ADD overflow contenido en 2*WIDTH
-        send(8'hFF, 8'hFF, 3'b010, 1'b0); // MUL max
-        send(8'h00, 8'hFF, 3'b001, 1'b0); // SUB con underflow -> wrap
+        // === NOP: op=0000 -> ALU pasiva (out=0, zero=1) ===
+        send(8'hAA, 8'hBB, OP_NOP, 1'b0);   // NOP con datos no-cero
+        send(8'h00, 8'h00, OP_NOP, 1'b0);   // NOP con ceros
+
+        // === invalid_data=1 en cada operacion: fuerza error/-1 ===
+        send(8'h05, 8'h03, OP_ADD, 1'b1);   // ADD con invalid
+        send(8'h10, 8'h01, OP_SUB, 1'b1);   // SUB con invalid
+        send(8'h10, 8'h10, OP_MUL, 1'b1);   // MUL con invalid
+        send(8'h20, 8'h04, OP_DIV, 1'b1);   // DIV con invalid
+        send(8'hAA, 8'hBB, OP_NOP, 1'b1);   // NOP con invalid
     endtask
 
 endclass

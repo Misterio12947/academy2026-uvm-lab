@@ -24,7 +24,7 @@ UVM_VERB  ?= UVM_MEDIUM
 # Coverage: linea, condicion, FSM, toggle, branch, assert
 COV_FLAGS = -cm line+cond+fsm+tgl+branch+assert
 COV_NAME  = -cm_name $(TEST) -cm_dir simv.vdb
-COV_HIER  = -cm_hier cm_hier.cfg
+COV_HIER  = -cm_hier cm_hier.cfg -cm_assert_hier cm_hier.cfg
 
 # Flags de compilacion VCS.
 # -cm_hier filtra la instrumentacion a solo DUT + testbench para
