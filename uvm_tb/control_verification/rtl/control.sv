@@ -11,7 +11,14 @@
 // Decodificacion de cmd_in:
 //   [6:5] -> in_select_a (muxA del datapath)
 //   [4:3] -> in_select_b (muxB del datapath)
-//   [2:0] -> opcode[2:0]  (opcode base ISA; opcode[3] reservado, siempre 0)
+//   [2:0] -> ISA opcode base (ver tabla en cmd_to_alu_opcode)
+//
+// Encoding del opcode ALU (one-hot per revisor feedback):
+//   ADD  -> 4'b0001 (op[0]=1)
+//   SUB  -> 4'b0010 (op[1]=1)
+//   MUL  -> 4'b0100 (op[2]=1)
+//   DIV  -> 4'b1000 (op[3]=1)
+//   NOP0/LOAD/STORE/NOP1 -> 4'b0000 (ALU pasiva)
 //
 // nvalid_data se asserta en EXECUTE cuando la instruccion previa termino en
 // error (p_error=1) Y algun mux selecciona feedback loop (2'b11).
@@ -20,7 +27,7 @@ module control (
     input  logic       clk,
     input  logic       rst,           // Reset asincrono activo alto
     input  logic [6:0] cmd_in,
-    input  logic       p_error,       // Error de instruccion previa (ya registrado externamente)
+    input  logic       p_error,       // Error de instruccion previa (registrado externamente)
     output logic       aluin_reg_en,
     output logic       datain_reg_en,
     output logic       memoryWrite,
@@ -31,18 +38,18 @@ module control (
     output logic       nvalid_data,
     output logic [1:0] in_select_a,
     output logic [1:0] in_select_b,
-    output logic [3:0] opcode         // 4 bits per spec del lab
+    output logic [3:0] opcode         // 4 bits one-hot per spec del lab
 );
 
-    // Opcodes de la ISA (spec del lab)
-    localparam logic [2:0] OP_ADD   = 3'b000;
-    localparam logic [2:0] OP_SUB   = 3'b001;
-    localparam logic [2:0] OP_MUL   = 3'b010;
-    localparam logic [2:0] OP_DIV   = 3'b011;
-    localparam logic [2:0] OP_NOP0  = 3'b100;
-    localparam logic [2:0] OP_LOAD  = 3'b101;
-    localparam logic [2:0] OP_STORE = 3'b110;
-    localparam logic [2:0] OP_NOP1  = 3'b111;
+    // Opcodes ISA (3 bits, extraidos de cmd_in[2:0])
+    localparam logic [2:0] ISA_ADD   = 3'b000;
+    localparam logic [2:0] ISA_SUB   = 3'b001;
+    localparam logic [2:0] ISA_MUL   = 3'b010;
+    localparam logic [2:0] ISA_DIV   = 3'b011;
+    localparam logic [2:0] ISA_NOP0  = 3'b100;
+    localparam logic [2:0] ISA_LOAD  = 3'b101;
+    localparam logic [2:0] ISA_STORE = 3'b110;
+    localparam logic [2:0] ISA_NOP1  = 3'b111;
 
     // Estados de la FSM (4 estados, incluyendo RST_ST explicito per spec)
     typedef enum logic [1:0] {
@@ -63,6 +70,28 @@ module control (
         cmd_muxB = cmd_in[4:3];
         cmd_op   = cmd_in[2:0];
     end
+
+    //--------------------------------------------------------------------------
+    // Funcion helper: traduce cmd_in[2:0] (ISA) al encoding one-hot del ALU.
+    // - ADD/SUB/MUL/DIV: uno de los 4 bits en 1 (per revisor feedback)
+    // - NOP0/LOAD/STORE/NOP1: op=0000 (ALU pasiva)
+    //--------------------------------------------------------------------------
+    function automatic logic [3:0] cmd_to_alu_opcode(input logic [2:0] cmd_op);
+        unique case (cmd_op)
+            ISA_ADD:  cmd_to_alu_opcode = 4'b0001;  // ADD -> op[0]
+            ISA_SUB:  cmd_to_alu_opcode = 4'b0010;  // SUB -> op[1]
+            ISA_MUL:  cmd_to_alu_opcode = 4'b0100;  // MUL -> op[2]
+            ISA_DIV:  cmd_to_alu_opcode = 4'b1000;  // DIV -> op[3]
+            // Operaciones no-ALU: op=0000 (ALU pasiva)
+            ISA_NOP0,
+            ISA_LOAD,
+            ISA_STORE,
+            ISA_NOP1: cmd_to_alu_opcode = 4'b0000;
+            // VCS coverage off
+            default:  cmd_to_alu_opcode = 4'b0000;
+            // VCS coverage on
+        endcase
+    endfunction
 
     //--------------------------------------------------------------------------
     // Registro de estado (reset asincrono activo alto)
@@ -105,7 +134,7 @@ module control (
         // Senales de control del datapath salen siempre con la instruccion actual
         in_select_a    = cmd_muxA;
         in_select_b    = cmd_muxB;
-        opcode         = {1'b0, cmd_op};
+        opcode         = cmd_to_alu_opcode(cmd_op);
 
         unique case (current_state)
             RST_ST: begin
@@ -127,7 +156,7 @@ module control (
                 nvalid_data = p_error &&
                               ((cmd_muxA == 2'b11) || (cmd_muxB == 2'b11));
                 // LOAD: leer memoria en paralelo con la ALU
-                if (cmd_op == OP_LOAD) begin
+                if (cmd_op == ISA_LOAD) begin
                     memoryRead = 1'b1;
                     selmux2    = 1'b1;   // ruta memoria -> registro de salida
                 end
@@ -138,7 +167,7 @@ module control (
                 // la instruccion es STORE escribe a memoria.
                 cpu_rdy       = 1'b1;
                 datain_reg_en = 1'b1;
-                if (cmd_op == OP_STORE) begin
+                if (cmd_op == ISA_STORE) begin
                     memoryWrite = 1'b1;
                 end
             end

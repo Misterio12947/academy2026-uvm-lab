@@ -3,22 +3,23 @@
 // TB standalone del control unit. Verifica la FSM de 4 estados, la
 // decodificacion de cmd_in por opcode, y la propagacion de p_error.
 //
+// Encoding del opcode ALU (one-hot per revisor feedback):
+//   ADD  -> 4'b0001
+//   SUB  -> 4'b0010
+//   MUL  -> 4'b0100
+//   DIV  -> 4'b1000
+//   NOP0/LOAD/STORE/NOP1 -> 4'b0000 (ALU pasiva)
+//
 // 9 escenarios:
 //   1. Reset asincrono lleva a RST_ST con outputs correctos
 //   2. Transicion RST -> FETCH_DECODE -> EXECUTE -> STORE (ciclo completo ADD)
-//   3. Ciclo LOAD (memoryRead=1 y selmux2=1 en EXECUTE)
-//   4. Ciclo STORE (memoryWrite=1 en STORE)
-//   5. Ciclos NOP0 y NOP1 (no acceden memoria)
+//   3. Ciclo LOAD (memoryRead=1 y selmux2=1 en EXECUTE, opcode=0000)
+//   4. Ciclo STORE (memoryWrite=1 en STORE, opcode=0000)
+//   5. Ciclos NOP0 y NOP1 (no acceden memoria, opcode=0000)
 //   6. cpu_rdy solo activo en STORE (verificacion de pulso)
 //   7. nvalid_data: p_error + feedback (muxA=11 o muxB=11)
 //   8. Reset mid-instruccion vuelve a RST_ST inmediatamente
-//   9. Back-to-back instructions (dos ADD consecutivas)
-//
-// Firma de outputs por estado (util para verificacion):
-//   RST_ST:       datain_reg_en=1, cpu_rdy=0, aluin_reg_en=0, aluout_reg_en=0
-//   FETCH_DECODE: aluin_reg_en=1,  cpu_rdy=0, datain_reg_en=0, aluout_reg_en=0
-//   EXECUTE:      aluout_reg_en=1, cpu_rdy=0, aluin_reg_en=0, datain_reg_en=0
-//   STORE:        cpu_rdy=1, datain_reg_en=1, aluin_reg_en=0, aluout_reg_en=0
+//   9. Back-to-back instructions (ADD -> SUB)
 //------------------------------------------------------------------------------
 `timescale 1ns/1ps
 
@@ -87,7 +88,6 @@ module tb_control;
         $fsdbDumpvars(0, tb_control);
     end
 
-    // Helper: aplicar reset asincrono
     task automatic do_reset();
         @(negedge clk);
         rst = 1'b1;
@@ -96,7 +96,6 @@ module tb_control;
         rst = 1'b0;
     endtask
 
-    // Helper: componer cmd_in de sus campos
     function automatic logic [6:0] mk_cmd(input logic [1:0] mA,
                                           input logic [1:0] mB,
                                           input logic [2:0] op);
@@ -105,10 +104,9 @@ module tb_control;
 
     initial begin
         $display("================================================================");
-        $display("  TB standalone: control (FSM 4 estados)");
+        $display("  TB standalone: control (FSM 4 estados, opcode ALU one-hot)");
         $display("================================================================");
 
-        // Init
         cmd_in  = 7'h00;
         p_error = 1'b0;
         rst     = 1'b0;
@@ -128,30 +126,26 @@ module tb_control;
 
         //----------------------------------------------------------------------
         // ESC 2: Ciclo completo ADD (RST -> FETCH -> EXEC -> STORE)
+        // opcode ADD = 4'b0001 (one-hot: op[0]=1)
         //----------------------------------------------------------------------
-        $display("\n--- ESC 2: Ciclo completo ADD ---");
-        // Preparar cmd_in para ADD antes de salir de RST
-        // ADD: op=3'b000, muxA=01, muxB=10 (arbitrarios)
-        cmd_in = mk_cmd(2'b01, 2'b10, 3'b000);
+        $display("\n--- ESC 2: Ciclo completo ADD (opcode one-hot) ---");
+        cmd_in = mk_cmd(2'b01, 2'b10, 3'b000);   // ADD
 
-        // Wait 1 posedge -> FETCH_DECODE
-        @(posedge clk); #1;
+        @(posedge clk); #1;   // FETCH_DECODE
         check_bit("FETCH_DECODE: aluin_reg_en=1",    1'b1, aluin_reg_en);
         check_bit("FETCH_DECODE: datain_reg_en=0",   1'b0, datain_reg_en);
         check_bit("FETCH_DECODE: cpu_rdy=0",         1'b0, cpu_rdy);
         check_val("FETCH_DECODE: in_select_a=01",    4'b0001, {2'b00, in_select_a});
         check_val("FETCH_DECODE: in_select_b=10",    4'b0010, {2'b00, in_select_b});
 
-        // Wait 1 posedge -> EXECUTE
-        @(posedge clk); #1;
+        @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE: aluout_reg_en=1",        1'b1, aluout_reg_en);
         check_bit("EXECUTE: aluin_reg_en=0",         1'b0, aluin_reg_en);
         check_bit("EXECUTE ADD: memoryRead=0",       1'b0, memoryRead);
         check_bit("EXECUTE ADD: memoryWrite=0",      1'b0, memoryWrite);
-        check_val("EXECUTE: opcode=0000 (ADD)",      4'b0000, opcode);
+        check_val("EXECUTE: opcode=0001 (ADD one-hot)", 4'b0001, opcode);
 
-        // Wait 1 posedge -> STORE
-        @(posedge clk); #1;
+        @(posedge clk); #1;   // STORE
         check_bit("STORE: cpu_rdy=1 (pulso)",        1'b1, cpu_rdy);
         check_bit("STORE: datain_reg_en=1",          1'b1, datain_reg_en);
         check_bit("STORE ADD: memoryWrite=0",        1'b0, memoryWrite);
@@ -159,8 +153,9 @@ module tb_control;
 
         //----------------------------------------------------------------------
         // ESC 3: Ciclo LOAD (memoryRead + selmux2 en EXECUTE)
+        // opcode LOAD = 4'b0000 (ALU pasiva)
         //----------------------------------------------------------------------
-        $display("\n--- ESC 3: Ciclo LOAD ---");
+        $display("\n--- ESC 3: Ciclo LOAD (opcode 0000 - ALU pasiva) ---");
         do_reset();
         cmd_in = mk_cmd(2'b00, 2'b00, 3'b101);   // LOAD
 
@@ -169,7 +164,7 @@ module tb_control;
         check_bit("EXECUTE LOAD: memoryRead=1",      1'b1, memoryRead);
         check_bit("EXECUTE LOAD: selmux2=1",         1'b1, selmux2);
         check_bit("EXECUTE LOAD: memoryWrite=0",     1'b0, memoryWrite);
-        check_val("EXECUTE LOAD: opcode=0101",       4'b0101, opcode);
+        check_val("EXECUTE LOAD: opcode=0000 (ALU pasiva)", 4'b0000, opcode);
 
         @(posedge clk); #1;   // STORE
         check_bit("STORE LOAD: cpu_rdy=1",           1'b1, cpu_rdy);
@@ -177,8 +172,9 @@ module tb_control;
 
         //----------------------------------------------------------------------
         // ESC 4: Ciclo STORE (memoryWrite en STORE)
+        // opcode STORE = 4'b0000 (ALU pasiva)
         //----------------------------------------------------------------------
-        $display("\n--- ESC 4: Ciclo STORE ---");
+        $display("\n--- ESC 4: Ciclo STORE (opcode 0000 - ALU pasiva) ---");
         do_reset();
         cmd_in = mk_cmd(2'b00, 2'b00, 3'b110);   // STORE
 
@@ -186,6 +182,7 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE STORE: memoryWrite=0",    1'b0, memoryWrite);
         check_bit("EXECUTE STORE: memoryRead=0",     1'b0, memoryRead);
+        check_val("EXECUTE STORE: opcode=0000 (ALU pasiva)", 4'b0000, opcode);
 
         @(posedge clk); #1;   // STORE
         check_bit("STORE STORE: memoryWrite=1",      1'b1, memoryWrite);
@@ -193,9 +190,9 @@ module tb_control;
         check_bit("STORE STORE: memoryRead=0",       1'b0, memoryRead);
 
         //----------------------------------------------------------------------
-        // ESC 5: NOP0 y NOP1 no acceden memoria
+        // ESC 5: NOP0 y NOP1 no acceden memoria, opcode=0000
         //----------------------------------------------------------------------
-        $display("\n--- ESC 5: NOP no accede memoria ---");
+        $display("\n--- ESC 5: NOP no accede memoria (opcode 0000) ---");
         do_reset();
         cmd_in = mk_cmd(2'b00, 2'b00, 3'b100);   // NOP0
 
@@ -203,6 +200,7 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE NOP0: memoryRead=0",      1'b0, memoryRead);
         check_bit("EXECUTE NOP0: memoryWrite=0",     1'b0, memoryWrite);
+        check_val("EXECUTE NOP0: opcode=0000",       4'b0000, opcode);
 
         @(posedge clk); #1;   // STORE
         check_bit("STORE NOP0: memoryWrite=0",       1'b0, memoryWrite);
@@ -214,6 +212,7 @@ module tb_control;
         @(posedge clk); #1;   // FETCH_DECODE
         @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE NOP1: memoryRead=0",      1'b0, memoryRead);
+        check_val("EXECUTE NOP1: opcode=0000",       4'b0000, opcode);
         @(posedge clk); #1;   // STORE
         check_bit("STORE NOP1: memoryWrite=0",       1'b0, memoryWrite);
 
@@ -236,7 +235,7 @@ module tb_control;
         @(posedge clk); #1;   // STORE
         check_bit("STORE: cpu_rdy=1 (pulso ON)",     1'b1, cpu_rdy);
 
-        @(posedge clk); #1;   // Next FETCH_DECODE (pulso terminado)
+        @(posedge clk); #1;   // Next FETCH_DECODE
         check_bit("Next FETCH_DECODE: cpu_rdy=0",    1'b0, cpu_rdy);
 
         //----------------------------------------------------------------------
@@ -245,7 +244,6 @@ module tb_control;
         $display("\n--- ESC 7: nvalid_data con p_error + feedback ---");
         do_reset();
 
-        // Caso a: p_error=1 y muxA=11 (feedback) -> nvalid_data=1 en EXECUTE
         cmd_in  = mk_cmd(2'b11, 2'b00, 3'b000);
         p_error = 1'b1;
 
@@ -253,7 +251,6 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("p_error=1 + muxA=11: nvalid_data=1", 1'b1, nvalid_data);
 
-        // Caso b: p_error=1 y muxB=11 (feedback) -> nvalid_data=1
         do_reset();
         cmd_in  = mk_cmd(2'b00, 2'b11, 3'b000);
         p_error = 1'b1;
@@ -261,7 +258,6 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("p_error=1 + muxB=11: nvalid_data=1", 1'b1, nvalid_data);
 
-        // Caso c: p_error=1 pero sin feedback (muxA/B != 11) -> nvalid_data=0
         do_reset();
         cmd_in  = mk_cmd(2'b01, 2'b10, 3'b000);
         p_error = 1'b1;
@@ -269,7 +265,6 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("p_error=1 sin feedback: nvalid_data=0", 1'b0, nvalid_data);
 
-        // Caso d: p_error=0 con feedback -> nvalid_data=0
         do_reset();
         cmd_in  = mk_cmd(2'b11, 2'b11, 3'b000);
         p_error = 1'b0;
@@ -277,10 +272,10 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("p_error=0 con feedback: nvalid_data=0", 1'b0, nvalid_data);
 
-        p_error = 1'b0;   // limpiar para siguientes escenarios
+        p_error = 1'b0;
 
         //----------------------------------------------------------------------
-        // ESC 8: Reset mid-instruccion vuelve a RST_ST inmediatamente
+        // ESC 8: Reset mid-instruccion
         //----------------------------------------------------------------------
         $display("\n--- ESC 8: Reset mid-instruccion ---");
         do_reset();
@@ -288,7 +283,6 @@ module tb_control;
 
         @(posedge clk); #1;   // FETCH_DECODE
         @(posedge clk); #1;   // EXECUTE
-        // Ahora forzamos reset a la mitad
         rst = 1'b1;
         #2;
         check_bit("Reset mid-EXECUTE: aluin_reg_en=0", 1'b0, aluin_reg_en);
@@ -298,18 +292,19 @@ module tb_control;
         rst = 1'b0;
 
         //----------------------------------------------------------------------
-        // ESC 9: Back-to-back instructions (dos ADD consecutivas)
+        // ESC 9: Back-to-back instructions (ADD -> SUB)
+        // Verifica que el opcode cambia entre instrucciones (0001 -> 0010)
         //----------------------------------------------------------------------
-        $display("\n--- ESC 9: Back-to-back instructions ---");
+        $display("\n--- ESC 9: Back-to-back instructions (ADD -> SUB) ---");
         do_reset();
         cmd_in = mk_cmd(2'b00, 2'b00, 3'b000);   // ADD 1
 
         @(posedge clk); #1;   // FETCH_DECODE
         @(posedge clk); #1;   // EXECUTE
+        check_val("Instr 1 EXECUTE: opcode=0001 (ADD)", 4'b0001, opcode);
         @(posedge clk); #1;   // STORE (cpu_rdy=1)
         check_bit("Instr 1 STORE: cpu_rdy=1",        1'b1, cpu_rdy);
 
-        // Sin resetear, la siguiente instruccion debe fluir naturalmente
         cmd_in = mk_cmd(2'b01, 2'b01, 3'b001);   // SUB
 
         @(posedge clk); #1;   // FETCH_DECODE (instr 2)
@@ -317,7 +312,7 @@ module tb_control;
         check_bit("Instr 2 FETCH: cpu_rdy=0",        1'b0, cpu_rdy);
 
         @(posedge clk); #1;   // EXECUTE (instr 2)
-        check_val("Instr 2 EXECUTE: opcode=0001 (SUB)", 4'b0001, opcode);
+        check_val("Instr 2 EXECUTE: opcode=0010 (SUB)", 4'b0010, opcode);
         check_bit("Instr 2 EXECUTE: aluout_reg_en=1", 1'b1, aluout_reg_en);
 
         @(posedge clk); #1;   // STORE (instr 2)
