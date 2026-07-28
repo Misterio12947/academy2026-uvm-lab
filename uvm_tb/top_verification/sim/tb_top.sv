@@ -184,15 +184,30 @@ module tb_top;
         check_bit("NOP: error=0",                  1'b0, error);
         check_bit("NOP: cpu_rdy=1",                1'b1, cpu_rdy);
 
-        //----------------------------------------------------------------------
+		//----------------------------------------------------------------------
         // ESC 8: STORE + LOAD (write-then-read en memoria)
+        //
+        // Per diagrama del spec: el STORE escribe {dout_high, dout_low} (el
+        // resultado de la instruccion PREVIA) a memoria, no un dato fresco.
+        // Por eso la secuencia es:
+        //   1. Una instruccion que produce el dato (ADD 0xC0 + 0x0C = 0xCC)
+        //   2. STORE que escribe ese {dout_high, dout_low}=0x00CC a addr=5
+        //   3. LOAD que lee addr=5 y debe recuperar 0x00CC
         //----------------------------------------------------------------------
         $display("\n--- ESC 8: STORE then LOAD ---");
-        // STORE at addr=5, data=0xCC (via pass-through de in2)
-        reset_and_run(mk_cmd(2'b00, 2'b01, 3'b110), 8'h05, 8'hCC, 8'h00);
+
+        // Paso 1: ADD para producir 0x00CC en {dout_high, dout_low}
+        // 0xC0 + 0x0C = 0xCC
+        reset_and_run(mk_cmd(2'b00, 2'b01, 3'b000), 8'hC0, 8'h0C, 8'h00);
+        check_val("Setup ADD 0xC0+0x0C: dout=0x00CC", 16'h00CC, {dout_high, dout_low});
+
+        // Paso 2: STORE a addr=5. El address viene de mux_a_out.
+        // muxA selecciona din_1=0x05 como direccion. El dato escrito es el
+        // {dout_high, dout_low}=0x00CC del ADD anterior.
+        run_instr(mk_cmd(2'b00, 2'b00, 3'b110), 8'h05, 8'h00, 8'h00);
         check_bit("STORE: cpu_rdy=1",              1'b1, cpu_rdy);
 
-        // LOAD desde addr=5
+        // Paso 3: LOAD desde addr=5. Debe recuperar 0x00CC.
         run_instr(mk_cmd(2'b00, 2'b00, 3'b101), 8'h05, 8'h00, 8'h00);
         check_bit("LOAD: cpu_rdy=1",               1'b1, cpu_rdy);
         check_val("LOAD from addr 5: dout=0x00CC", 16'h00CC, {dout_high, dout_low});

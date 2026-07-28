@@ -148,13 +148,24 @@ module control (
                 aluin_reg_en = 1'b1;
             end
 
-            EXECUTE: begin
+			EXECUTE: begin
                 // ALU computa, resultado se captura al final del ciclo.
-                aluout_reg_en = 1'b1;
+                // EXCEPCION STORE: NO capturamos en el registro de salida
+                // (aluout_reg_en=0) para preservar el {dout_high, dout_low}
+                // de la instruccion previa. Ese es justamente el dato que la
+                // instruccion STORE va a escribir a memoria (per spec:
+                // "the result of the computed instruction is shared at the
+                // output... if it is a store instruction, it occurs in this
+                // cycle"). Si capturaramos aqui, la ALU pasiva (out=0)
+                // sobreescribiria el dato a guardar.
+                if (cmd_op != ISA_STORE)
+                    aluout_reg_en = 1'b1;
+
                 // Si la instruccion previa termino en error Y algun mux
                 // selecciona feedback loop, notificar a la ALU.
                 nvalid_data = p_error &&
                               ((cmd_muxA == 2'b11) || (cmd_muxB == 2'b11));
+
                 // LOAD: leer memoria en paralelo con la ALU
                 if (cmd_op == ISA_LOAD) begin
                     memoryRead = 1'b1;

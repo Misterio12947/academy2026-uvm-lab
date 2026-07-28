@@ -183,6 +183,7 @@ module tb_control;
         check_bit("EXECUTE STORE: memoryWrite=0",    1'b0, memoryWrite);
         check_bit("EXECUTE STORE: memoryRead=0",     1'b0, memoryRead);
         check_val("EXECUTE STORE: opcode=0000 (ALU pasiva)", 4'b0000, opcode);
+        check_bit("EXECUTE STORE: aluout_reg_en=0 (preserva dato para memoria)", 1'b0, aluout_reg_en);
 
         @(posedge clk); #1;   // STORE
         check_bit("STORE STORE: memoryWrite=1",      1'b1, memoryWrite);
