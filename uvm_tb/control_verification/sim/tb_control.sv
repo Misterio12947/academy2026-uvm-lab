@@ -164,7 +164,7 @@ module tb_control;
         check_bit("EXECUTE LOAD: memoryRead=1",      1'b1, memoryRead);
         check_bit("EXECUTE LOAD: selmux2=1",         1'b1, selmux2);
         check_bit("EXECUTE LOAD: memoryWrite=0",     1'b0, memoryWrite);
-        check_val("EXECUTE LOAD: opcode=0000 (ALU pasiva)", 4'b0000, opcode);
+        check_val("EXECUTE LOAD: opcode=0001 (ADD neutro)", 4'b0001, opcode);
 
         @(posedge clk); #1;   // STORE
         check_bit("STORE LOAD: cpu_rdy=1",           1'b1, cpu_rdy);
@@ -182,7 +182,7 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE STORE: memoryWrite=0",    1'b0, memoryWrite);
         check_bit("EXECUTE STORE: memoryRead=0",     1'b0, memoryRead);
-        check_val("EXECUTE STORE: opcode=0000 (ALU pasiva)", 4'b0000, opcode);
+        check_val("EXECUTE STORE: opcode=0001 (ADD neutro)", 4'b0001, opcode);
         check_bit("EXECUTE STORE: aluout_reg_en=0 (preserva dato para memoria)", 1'b0, aluout_reg_en);
 
         @(posedge clk); #1;   // STORE
@@ -201,8 +201,9 @@ module tb_control;
         @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE NOP0: memoryRead=0",      1'b0, memoryRead);
         check_bit("EXECUTE NOP0: memoryWrite=0",     1'b0, memoryWrite);
-        check_val("EXECUTE NOP0: opcode=0000",       4'b0000, opcode);
-
+        check_val("EXECUTE NOP0: opcode=0001 (ADD neutro)", 4'b0001, opcode);
+		check_bit("EXECUTE NOP0: aluout_reg_en=0 (mantiene estado)", 1'b0, aluout_reg_en);
+		
         @(posedge clk); #1;   // STORE
         check_bit("STORE NOP0: memoryWrite=0",       1'b0, memoryWrite);
         check_bit("STORE NOP0: cpu_rdy=1",           1'b1, cpu_rdy);
@@ -213,7 +214,8 @@ module tb_control;
         @(posedge clk); #1;   // FETCH_DECODE
         @(posedge clk); #1;   // EXECUTE
         check_bit("EXECUTE NOP1: memoryRead=0",      1'b0, memoryRead);
-        check_val("EXECUTE NOP1: opcode=0000",       4'b0000, opcode);
+        check_val("EXECUTE NOP1: opcode=0001 (ADD neutro)", 4'b0001, opcode);
+		check_bit("EXECUTE NOP1: aluout_reg_en=0 (mantiene estado)", 1'b0, aluout_reg_en);
         @(posedge clk); #1;   // STORE
         check_bit("STORE NOP1: memoryWrite=0",       1'b0, memoryWrite);
 

@@ -174,15 +174,24 @@ module tb_top;
         check_bit("DIV /0: error=1",               1'b1, error);
         check_bit("DIV /0: cpu_rdy=1",             1'b1, cpu_rdy);
 
+		//----------------------------------------------------------------------
+        // ESC 7: NOP mantiene el estado (no altera dout)
+        //
+        // Per spec: "NOP debe mantener el estado". El NOP no captura en el
+        // registro de salida (aluout_reg_en=0), asi que {dout_high, dout_low}
+        // conserva el valor de la instruccion previa.
         //----------------------------------------------------------------------
-        // ESC 7: NOP (out=0, zero=1)
-        //----------------------------------------------------------------------
-        $display("\n--- ESC 7: NOP ---");
-        reset_and_run(mk_cmd(2'b00, 2'b00, 3'b100), 8'hDE, 8'hAD, 8'hBE);
-        check_val("NOP: dout=0",                   16'h0000, {dout_high, dout_low});
-        check_bit("NOP: zero=1",                   1'b1, zero);
-        check_bit("NOP: error=0",                  1'b0, error);
-        check_bit("NOP: cpu_rdy=1",                1'b1, cpu_rdy);
+        $display("\n--- ESC 7: NOP mantiene el estado ---");
+
+        // Instr previa: ADD que produce un valor conocido (0x08)
+        reset_and_run(mk_cmd(2'b00, 2'b01, 3'b000), 8'h05, 8'h03, 8'h00);
+        check_val("Previa ADD 5+3: dout=0x0008",   16'h0008, {dout_high, dout_low});
+
+        // NOP: debe MANTENER dout=0x0008 (no alterarlo)
+        run_instr(mk_cmd(2'b00, 2'b00, 3'b100), 8'hDE, 8'hAD, 8'hBE);
+        check_val("NOP mantiene dout=0x0008",       16'h0008, {dout_high, dout_low});
+        check_bit("NOP: error=0",                   1'b0, error);
+        check_bit("NOP: cpu_rdy=1",                 1'b1, cpu_rdy);
 
 		//----------------------------------------------------------------------
         // ESC 8: STORE + LOAD (write-then-read en memoria)

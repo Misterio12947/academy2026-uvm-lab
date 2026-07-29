@@ -71,24 +71,27 @@ module control (
         cmd_op   = cmd_in[2:0];
     end
 
-    //--------------------------------------------------------------------------
-    // Funcion helper: traduce cmd_in[2:0] (ISA) al encoding one-hot del ALU.
-    // - ADD/SUB/MUL/DIV: uno de los 4 bits en 1 (per revisor feedback)
-    // - NOP0/LOAD/STORE/NOP1: op=0000 (ALU pasiva)
-    //--------------------------------------------------------------------------
+	// Funcion helper: traduce cmd_in[2:0] (ISA) al encoding one-hot del ALU.
+    // La ALU tiene exactamente 4 operaciones (ADD/SUB/MUL/DIV), sin NOP.
+    // Para instrucciones no-aritmeticas (LOAD/STORE/NOP0/NOP1), se envia ADD
+    // (0001) como opcode NEUTRO: la ALU computa in1+in2 pero el datapath
+    // ignora el resultado (selmux2=1 toma memoria en LOAD, aluout_reg_en=0
+    // en STORE). La FSM NUNCA envia 0000 - el default de la ALU es solo
+    // defensa contra latches.
     function automatic logic [3:0] cmd_to_alu_opcode(input logic [2:0] cmd_op);
         unique case (cmd_op)
             ISA_ADD:  cmd_to_alu_opcode = 4'b0001;  // ADD -> op[0]
             ISA_SUB:  cmd_to_alu_opcode = 4'b0010;  // SUB -> op[1]
             ISA_MUL:  cmd_to_alu_opcode = 4'b0100;  // MUL -> op[2]
             ISA_DIV:  cmd_to_alu_opcode = 4'b1000;  // DIV -> op[3]
-            // Operaciones no-ALU: op=0000 (ALU pasiva)
+            // Instrucciones no-aritmeticas: ADD (0001) como opcode neutro.
+            // El resultado se ignora via datapath.
             ISA_NOP0,
             ISA_LOAD,
             ISA_STORE,
-            ISA_NOP1: cmd_to_alu_opcode = 4'b0000;
+            ISA_NOP1: cmd_to_alu_opcode = 4'b0001;  // ADD neutro
             // VCS coverage off
-            default:  cmd_to_alu_opcode = 4'b0000;
+            default:  cmd_to_alu_opcode = 4'b0001;
             // VCS coverage on
         endcase
     endfunction
@@ -158,7 +161,15 @@ module control (
                 // output... if it is a store instruction, it occurs in this
                 // cycle"). Si capturaramos aqui, la ALU pasiva (out=0)
                 // sobreescribiria el dato a guardar.
-                if (cmd_op != ISA_STORE)
+				
+                // Solo las operaciones aritmeticas (ADD/SUB/MUL/DIV) y LOAD
+                // capturan en el registro de salida. STORE y NOP preservan
+                // el estado previo de {dout_high, dout_low}:
+                //   - STORE: preserva el dato a escribir a memoria
+                //   - NOP0/NOP1: "mantiene el estado" (no altera la salida)
+                if (cmd_op != ISA_STORE &&
+                    cmd_op != ISA_NOP0  &&
+                    cmd_op != ISA_NOP1)
                     aluout_reg_en = 1'b1;
 
                 // Si la instruccion previa termino en error Y algun mux
