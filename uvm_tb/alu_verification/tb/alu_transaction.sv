@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 // alu_transaction.sv
-// Sequence item del ALU. Encoding one-hot per revisor feedback.
+// Sequence item del ALU. Encoding one-hot, solo 4 operaciones validas.
 //------------------------------------------------------------------------------
 class alu_transaction extends uvm_sequence_item;
 
@@ -25,16 +25,15 @@ class alu_transaction extends uvm_sequence_item;
         `uvm_field_int(error,        UVM_ALL_ON)
     `uvm_object_utils_end
 
-    // Restriccion: op debe ser one-hot valido (0000 o exactamente un bit en 1).
-    // NOP tiene menos peso, aritmeticas mas peso para hits densos.
-    // DIV recibe algo mas para probar div-by-zero.
+    // Restriccion: op debe ser uno de los 4 one-hot validos.
+    // La FSM nunca envia 0000 ni multi-hot, asi que el estimulo tampoco.
+    // DIV recibe algo mas de peso para ejercitar div-by-zero.
     constraint c_op_valid_dist {
         op dist {
-            4'b0000 := 10,   // NOP (ALU pasiva)
-            4'b0001 := 22,   // ADD
-            4'b0010 := 22,   // SUB
-            4'b0100 := 22,   // MUL
-            4'b1000 := 24    // DIV
+            4'b0001 := 25,   // ADD
+            4'b0010 := 25,   // SUB
+            4'b0100 := 25,   // MUL
+            4'b1000 := 25    // DIV
         };
     }
 

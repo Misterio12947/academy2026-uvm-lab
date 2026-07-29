@@ -2,17 +2,25 @@
 // alu.sv
 // ALU parametrizada per lab spec (op 4 bits, out 2*WIDTH, -1 en error).
 //
-// Encoding del opcode: ONE-HOT sobre 4 bits (cada operacion es un bit).
-//   4'b0000 = NOP     (ALU pasiva - usado por FSM en LOAD/STORE/NOP)
-//   4'b0001 = ADD     (op[0]=1)
-//   4'b0010 = SUB     (op[1]=1)
-//   4'b0100 = MUL     (op[2]=1)
-//   4'b1000 = DIV     (op[3]=1)
+// Encoding del opcode: ONE-HOT sobre 4 bits. Solo 4 operaciones (per spec:
+// "This ALU has to have addition, subtraction, multiplication and division
+// operations").
+//   4'b0001 = ADD  (op[0]=1)
+//   4'b0010 = SUB  (op[1]=1)
+//   4'b0100 = MUL  (op[2]=1)
+//   4'b1000 = DIV  (op[3]=1)
 //
-// Cualquier op multi-hot (0011, 0101, 0110, ..., 1111) es un error de
-// codificacion y se maneja en el default como salida forzada -1 + error=1.
-// En operacion normal, la FSM NUNCA envia multi-hot; el default existe
-// como defensa contra corrupcion de X en simulacion.
+// La FSM SIEMPRE envia uno de estos 4 opcodes validos (nunca 0000 ni
+// multi-hot). Para instrucciones no-aritmeticas (LOAD/STORE/NOP), la FSM
+// envia ADD (0001) como opcode neutro y el datapath ignora el resultado
+// (selmux2 toma memoria en LOAD, aluout_reg_en=0 en STORE).
+//
+// El 'default' del case existe UNICAMENTE como defensa contra corrupcion
+// de X / latches inferidos. En operacion normal NUNCA se ejecuta, por eso
+// esta envuelto en pragma coverage off.
+//
+// error se asserta en: (a) division por cero, (b) invalid_data=1 (feedback
+// loop con resultado previo invalido, per spec del CPU).
 //------------------------------------------------------------------------------
 module ALU #(
     parameter WIDTH = 8
@@ -28,8 +36,7 @@ module ALU #(
     // -1 en 2*WIDTH bits = all-ones (complemento a dos)
     localparam logic [2*WIDTH-1:0] MINUS_ONE = {(2*WIDTH){1'b1}};
 
-    // Encoding one-hot del opcode (per lab spec y feedback del revisor)
-    localparam logic [3:0] OP_NOP = 4'b0000;
+    // Encoding one-hot de las 4 operaciones (per spec + revisor feedback)
     localparam logic [3:0] OP_ADD = 4'b0001;
     localparam logic [3:0] OP_SUB = 4'b0010;
     localparam logic [3:0] OP_MUL = 4'b0100;
@@ -48,12 +55,6 @@ module ALU #(
         end
         else begin
             unique case (op)
-                OP_NOP: begin
-                    // ALU pasiva: FSM envia 0000 en LOAD, STORE, NOP0, NOP1
-                    out   = '0;
-                    zero  = 1'b1;
-                    error = 1'b0;
-                end
                 OP_ADD: begin
                     out  = in1 + in2;
                     zero = (out == '0);
@@ -78,9 +79,11 @@ module ALU #(
                     end
                 end
                 // VCS coverage off
-                // Default: op multi-hot (codificacion invalida). En operacion
-                // normal la FSM nunca lo envia. Salida forzada -1 + error=1
-                // como defensa contra corrupcion. No cuenta en coverage.
+                // Default puramente defensivo. La FSM siempre envia uno de
+                // los 4 opcodes one-hot validos (ADD/SUB/MUL/DIV), nunca
+                // 0000 ni multi-hot. Este branch existe solo para evitar
+                // latches inferidos y como defensa contra corrupcion de X.
+                // No se ejecuta en operacion normal.
                 default: begin
                     out   = MINUS_ONE;
                     zero  = 1'b0;

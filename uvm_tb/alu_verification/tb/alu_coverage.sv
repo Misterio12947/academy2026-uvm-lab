@@ -1,10 +1,10 @@
 //------------------------------------------------------------------------------
 // alu_coverage.sv
-// Coverage funcional adaptado al encoding one-hot:
-//   - cp_op: 5 bins (NOP, ADD, SUB, MUL, DIV)
+// Coverage funcional adaptado a 4 operaciones one-hot (sin NOP):
+//   - cp_op: 4 bins (ADD, SUB, MUL, DIV)
 //   - cp_in1, cp_in2, cp_out: rangos
 //   - cp_invalid_data, cp_zero, cp_error
-//   - Crosses criticos: op x in2==0 (div-by-zero), op x invalid_data
+//   - Crosses: op x in2==0 (div-by-zero), op x invalid_data
 //------------------------------------------------------------------------------
 class alu_coverage extends uvm_subscriber#(alu_transaction);
 
@@ -16,9 +16,8 @@ class alu_coverage extends uvm_subscriber#(alu_transaction);
         option.per_instance = 1;
         option.name         = "cg_alu";
 
-        // Encoding one-hot: 5 bins validos
+        // Encoding one-hot: 4 bins validos (sin NOP)
         cp_op: coverpoint tr.op {
-            bins op_nop = {4'b0000};
             bins op_add = {4'b0001};
             bins op_sub = {4'b0010};
             bins op_mul = {4'b0100};
@@ -64,9 +63,8 @@ class alu_coverage extends uvm_subscriber#(alu_transaction);
             bins high = {1'b1};
         }
 
-		// Cross critico: cada op con in2=0 (verifica div-by-zero y bordes)
+        // Cross critico: cada op con in2=0 (verifica div-by-zero y bordes)
         cx_op_in2_zero: cross cp_op, cp_in2 {
-            bins nop_in2_zero = binsof(cp_op.op_nop) && binsof(cp_in2.zero);
             bins add_in2_zero = binsof(cp_op.op_add) && binsof(cp_in2.zero);
             bins sub_in2_zero = binsof(cp_op.op_sub) && binsof(cp_in2.zero);
             bins mul_in2_zero = binsof(cp_op.op_mul) && binsof(cp_in2.zero);
@@ -74,9 +72,8 @@ class alu_coverage extends uvm_subscriber#(alu_transaction);
             ignore_bins non_zero = binsof(cp_in2) intersect {[1:'hFF]};
         }
 
-        // Cross: cada op con invalid_data=1 (fuerza error/-1 independiente)
+        // Cross: cada op con invalid_data=1 (fuerza error/-1)
         cx_op_invalid: cross cp_op, cp_invalid_data {
-            bins nop_invalid = binsof(cp_op.op_nop) && binsof(cp_invalid_data.high);
             bins add_invalid = binsof(cp_op.op_add) && binsof(cp_invalid_data.high);
             bins sub_invalid = binsof(cp_op.op_sub) && binsof(cp_invalid_data.high);
             bins mul_invalid = binsof(cp_op.op_mul) && binsof(cp_invalid_data.high);

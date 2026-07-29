@@ -1,14 +1,12 @@
 //------------------------------------------------------------------------------
 // alu_directed_seq.sv
 // Directed cases: cada operacion con valores extremos, div-by-zero,
-// invalid_data en cada op, y NOP pasivo. Adaptado a encoding one-hot.
+// invalid_data en cada op. Encoding one-hot, 4 operaciones (sin NOP).
 //------------------------------------------------------------------------------
 class alu_directed_seq extends uvm_sequence#(alu_transaction);
 
     `uvm_object_utils(alu_directed_seq)
 
-    // Encoding one-hot (helpers)
-    localparam logic [3:0] OP_NOP = 4'b0000;
     localparam logic [3:0] OP_ADD = 4'b0001;
     localparam logic [3:0] OP_SUB = 4'b0010;
     localparam logic [3:0] OP_MUL = 4'b0100;
@@ -43,12 +41,12 @@ class alu_directed_seq extends uvm_sequence#(alu_transaction);
         // === SUB ===
         send(8'h10, 8'h01, OP_SUB, 1'b0);   // 16-1=15
         send(8'h05, 8'h05, OP_SUB, 1'b0);   // 5-5=0 (zero=1)
-        send(8'h00, 8'h01, OP_SUB, 1'b0);   // 0-1 (underflow, salida en complemento)
+        send(8'h00, 8'h01, OP_SUB, 1'b0);   // 0-1 (underflow)
 
         // === MUL: bordes de 2*WIDTH ===
         send(8'h10, 8'h10, OP_MUL, 1'b0);   // 16*16=256
-        send(8'hFF, 8'hFF, OP_MUL, 1'b0);   // 255*255=65025 (verifica dout_high)
-        send(8'h00, 8'hFF, OP_MUL, 1'b0);   // 0*x=0
+        send(8'hFF, 8'hFF, OP_MUL, 1'b0);   // 255*255=65025
+        send(8'h00, 8'hFF, OP_MUL, 1'b0);   // 0*x=0 (zero=1)
         send(8'h01, 8'hFF, OP_MUL, 1'b0);   // 1*255=255
 
         // === DIV: normales y por cero ===
@@ -58,16 +56,11 @@ class alu_directed_seq extends uvm_sequence#(alu_transaction);
         send(8'hAA, 8'h00, OP_DIV, 1'b0);   // div por cero -> error, out=-1
         send(8'hFF, 8'h00, OP_DIV, 1'b0);   // div por cero
 
-        // === NOP: op=0000 -> ALU pasiva (out=0, zero=1) ===
-        send(8'hAA, 8'hBB, OP_NOP, 1'b0);   // NOP con datos no-cero
-        send(8'h00, 8'h00, OP_NOP, 1'b0);   // NOP con ceros
-
         // === invalid_data=1 en cada operacion: fuerza error/-1 ===
         send(8'h05, 8'h03, OP_ADD, 1'b1);   // ADD con invalid
         send(8'h10, 8'h01, OP_SUB, 1'b1);   // SUB con invalid
         send(8'h10, 8'h10, OP_MUL, 1'b1);   // MUL con invalid
         send(8'h20, 8'h04, OP_DIV, 1'b1);   // DIV con invalid
-        send(8'hAA, 8'hBB, OP_NOP, 1'b1);   // NOP con invalid
     endtask
 
 endclass

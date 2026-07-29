@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 // alu_scoreboard.sv
-// Reference model per encoding one-hot. Predice out/zero/error y compara.
+// Reference model per encoding one-hot. Solo 4 operaciones + default defensivo.
 //------------------------------------------------------------------------------
 `uvm_analysis_imp_decl(_alu)
 
@@ -11,7 +11,6 @@ class alu_scoreboard extends uvm_scoreboard;
     uvm_analysis_imp_alu#(alu_transaction, alu_scoreboard) ap_imp;
 
     // Encoding one-hot (matches RTL)
-    localparam logic [3:0] OP_NOP = 4'b0000;
     localparam logic [3:0] OP_ADD = 4'b0001;
     localparam logic [3:0] OP_SUB = 4'b0010;
     localparam logic [3:0] OP_MUL = 4'b0100;
@@ -33,7 +32,7 @@ class alu_scoreboard extends uvm_scoreboard;
         num_errors  = 0;
     endfunction
 
-    // Reference model: replica exacta de la logica del RTL
+    // Reference model: replica exacta de la logica del RTL (4 ops + default)
     function void predict(input  bit [WIDTH-1:0]     i1, i2,
                           input  bit [3:0]           op,
                           input  bit                 invalid_data,
@@ -51,11 +50,6 @@ class alu_scoreboard extends uvm_scoreboard;
         end
         else begin
             case (op)
-                OP_NOP: begin
-                    exp_out   = '0;
-                    exp_zero  = 1'b1;
-                    exp_error = 1'b0;
-                end
                 OP_ADD: begin
                     exp_out  = i1 + i2;
                     exp_zero = (exp_out == '0);
@@ -80,7 +74,8 @@ class alu_scoreboard extends uvm_scoreboard;
                     end
                 end
                 default: begin
-                    // op multi-hot: se trata como error de codificacion
+                    // op invalido (0000 o multi-hot): defensivo, no ocurre
+                    // en operacion normal
                     exp_out   = MINUS_ONE;
                     exp_zero  = 1'b0;
                     exp_error = 1'b1;
