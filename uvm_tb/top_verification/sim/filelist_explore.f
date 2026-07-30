@@ -1,7 +1,6 @@
-+incdir+../tb
 +incdir+../rtl
 
-// Dependencias RTL: todos los submodulos ya firmados
+// Dependencias RTL: todos los submodulos ya firmados (single source of truth)
 ../../mux4_verification/rtl/mux4.sv
 ../../mux4_registered_verification/rtl/mux4_registered.sv
 ../../mux2_verification/rtl/mux2.sv
@@ -14,8 +13,5 @@
 // RTL del bloque top
 ../rtl/top.sv
 
-// Verificacion UVM
-../tb/top_if.sv
-../tb/top_pkg.sv
-../tb/top_test_pkg.sv
-../tb/testbench.sv
+// TB de exploracion (NO incluir tb_top.sv)
+../sim/tb_explore.sv
