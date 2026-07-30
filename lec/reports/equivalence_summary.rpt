@@ -1,0 +1,26 @@
+========================================================================
+LEC Sign-off Summary - CPU multiciclo (top)
+========================================================================
+Herramienta   : Formality V-2023.12-SP5
+Fecha         : 2026-07-30
+Reference     : RTL (../rtl/*.sv)
+Implementation: netlist DC (../syn/work/outputs/mapped.v)
+Libreria      : SKY130 sky130_fd_sc_hd (ss_100C_1v40 + ff_100C_1v95)
+SVF           : ../syn/work/default.svf
+
+RESULTADO: Verification SUCCEEDED
+
+Compare points:
+  Passing (equivalent)     : 190  (19 Port + 171 DFF)
+  Failing (not equivalent) :   0
+
+Notas:
+- Guia SVF del divisor (u_alu/div_7) rechazada; verificado sin guia,
+  resulto equivalente igual.
+- Nets undriven (net767X): internos de DesignWare, benignos.
+- Tiempo: ~8 seg, ~775 MB.
+
+El netlist sintetizado es logicamente equivalente al RTL.
+Los cambios arquitecturales (encoding one-hot, ALU 4 ops, STORE preserva
+registro, NOP mantiene estado) se sintetizaron sin alterar la logica.
+========================================================================
