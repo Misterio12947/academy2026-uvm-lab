@@ -79,3 +79,26 @@ syn/work/*.syn
 syn/work/*.mr
 # Conservar reportes y netlist finales, ignorar intermedios:
 # (si quieres versionar reportes, no los ignores)
+# ===== Formality LEC (ruido de trabajo) =====
+lec/FM_INFO/
+lec/formality_svf/
+lec/*.fm.cdf
+lec/*.log
+lec/DEFAULT/
+lec/fmv_tb/
+# Conservar solo scripts y resultados:
+#   lec/scripts/  y  lec/run.sh  SI se versionan
+#   lec/*.rpt (reportes de equivalencia) SI se versionan
+
+# ===== Design Compiler work (ruido) =====
+syn/work/alib-52/
+syn/work/dc_work/
+syn/work/command.log
+syn/work/*.svf
+syn/work/filenames.log
+syn/work/*.pvl
+syn/work/*.syn
+syn/work/*.mr
+
+# ===== Libs (los .db son binarios pesados del PDK) =====
+libs/
