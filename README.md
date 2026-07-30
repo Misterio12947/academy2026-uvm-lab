@@ -1,16 +1,29 @@
 # academy2026-uvm-lab — CPU Multiciclo (Synopsys Academy 2026)
 
-CPU multiciclo de 3 etapas verificado con UVM y sintetizado con Design
-Compiler para SKY130.
+CPU multiciclo de 3 etapas (FETCH_DECODE → EXECUTE → STORE), verificado con
+UVM, sintetizado con Design Compiler para SKY130 y validado con equivalencia
+logica (Formality).
+
+## Flujo ASIC front-end completo
+
+| Etapa                 | Herramienta       | Resultado                          | Tag / Evidencia         |
+| --------------------- | ----------------- | ---------------------------------- | ----------------------- |
+| Verificacion funcional| VCS + UVM         | 8 bloques 100% + top standalone 31/31 | `v2.0-uvm-verification` |
+| Synthesis             | Design Compiler   | WNS 0.00, path 8.5ns @ 100MHz, 0 DRC | `v3.0-synthesis-lec`    |
+| Equivalencia logica   | Formality         | 190/190 SUCCEEDED (19 Port + 171 DFF) | `v3.0-synthesis-lec`    |
 
 ## Estructura del proyecto
 ```
 project/
 ├── rtl/ # RTL canonico (fuente para synthesis)
-├── libs/ # Librerias SKY130 (.db)
+├── libs/ # Librerias SKY130 (.db) - ignorado en git
 ├── syn/ # Flujo de synthesis (Design Compiler)
-│ ├── scripts/ # Scripts Tcl del flujo
-│ └── work/ # Salidas: netlist, reportes, logs
+│ ├── scripts/ # setup, read_design, constraints, compile, run_syn
+│ └── work/ # Salidas: outputs/, reports/, logs/ (ruido ignorado)
+├── lec/ # Equivalencia logica (Formality)
+│ ├── scripts/ # fm.tcl
+│ ├── run.sh # runner del LEC
+│ └── reports/ # equivalence_summary.rpt (ruido FM ignorado)
 ├── uvm_tb/ # Verificacion UVM (9 bloques)
 │ └── <bloque>_verification/
 │ ├── rtl/ # RTL del bloque (ver NOTA de duplicacion)
@@ -24,7 +37,7 @@ project/
 
 **Estado actual (Opcion C - temporal):**
 Los RTL existen en DOS lugares:
-1. `rtl/` — copia canonica usada por synthesis
+1. `rtl/` — copia canonica usada por synthesis y LEC
 2. `uvm_tb/<bloque>_verification/rtl/` — copias usadas por verificacion
 
 Esto es una duplicacion temporal para desbloquear synthesis rapido. **Riesgo:
@@ -38,7 +51,8 @@ a `../../../rtl/<archivo>.sv`. Esto restablece "single source of truth".
 ### Checklist para la consolidacion (Opcion A) - PENDIENTE
 
 - [ ] Verificar que `rtl/` tiene la version mas reciente de cada RTL
-- [ ] Actualizar los 9 `filelist.f` en `uvm_tb/*/verification/sim/`:
+      (los ultimos fixes: encoding one-hot, ALU 4 ops, STORE, NOP)
+- [ ] Actualizar los 9 `filelist.f` en `uvm_tb/*_verification/sim/`:
       cambiar `../../<bloque>_verification/rtl/X.sv` -> `../../../rtl/X.sv`
 - [ ] Actualizar el `filelist.f` del top (referencia varios submodulos)
 - [ ] Correr `make regress` en cada env para confirmar que la verificacion
@@ -46,31 +60,70 @@ a `../../../rtl/<archivo>.sv`. Esto restablece "single source of truth".
 - [ ] Borrar los directorios `uvm_tb/*/rtl/`
 - [ ] Actualizar esta seccion del README
 
-**IMPORTANTE:** mientras la Opcion C este activa, si haces un fix a un RTL
-durante synthesis (ej. un cambio para timing), COPIALO tambien a
-`uvm_tb/<bloque>_verification/rtl/` para no perder la sincronizacion con
-verificacion.
+**IMPORTANTE:** mientras la Opcion C este activa, si haces un fix a un RTL,
+COPIALO tambien a `uvm_tb/<bloque>_verification/rtl/` para no perder la
+sincronizacion con verificacion. Nota: el flujo actual (synthesis + LEC) uso
+la copia de `rtl/`, que esta sincronizada con verificacion a la fecha del
+tag v3.0-synthesis-lec.
 
 ## Flujos
 
 ### Verificacion (UVM)
 ```bash
 cd uvm_tb/<bloque>_verification/sim
-make regress
+make regress              # env UVM completo
+./run.sh                  # TB standalone (fase 1)
 ```
 
 ### Synthesis (Design Compiler)
+Se corre DESDE `syn/work/` para confinar el ruido de DC:
 ```bash
-cd syn
-dc_shell -f scripts/run_syn.tcl | tee work/logs/synthesis.log
+cd syn/work
+mkdir -p reports outputs logs
+dc_shell -f ../scripts/run_syn.tcl | tee logs/synthesis.log
 ```
+Salidas: `syn/work/outputs/mapped.v` (netlist), `mapped.sdc`, `mapped.ddc`;
+reportes en `syn/work/reports/`.
+
+### Equivalencia logica (Formality)
+Se corre DESDE `lec/`:
+```bash
+cd lec
+./run.sh                  # fm_shell -f scripts/fm.tcl | tee formality.log
+```
+Verifica el RTL (`rtl/`) contra el netlist (`syn/work/outputs/mapped.v`)
+usando el SVF de DC (`syn/work/default.svf`) y ambas libs SKY130.
+Resultado en `lec/reports/`.
 
 ## Estado del proyecto
 
-Ver tag `v2.0-uvm-verification` para el hito de verificacion funcional.
+### Completado
+- **8 bloques con env UVM al 100%** de coverage funcional (ALU, register_bank,
+  mux4, mux2, mux4_registered, mux2_registered, memory, control)
+- **top validado end-to-end** por standalone (31/31 PASS)
+- **Synthesis del top** para SKY130: cierra timing a 100 MHz, 0 violaciones
+- **Equivalencia logica**: netlist == RTL (190/190 SUCCEEDED)
 
-- 8 bloques con env UVM al 100% de coverage funcional
-- top validado end-to-end por standalone (31/31)
-- Pendiente: golden model ciclo-a-ciclo para el env exhaustivo del top
-  (ver `uvm_tb/top_verification/docs/PIPELINE_TIMING.md`)
-- En curso: synthesis del top para SKY130
+### Cambios arquitecturales incorporados (per revisor feedback)
+- Opcode ALU one-hot (ADD=0001, SUB=0010, MUL=0100, DIV=1000)
+- ALU con exactamente 4 operaciones (sin NOP); FSM usa ADD neutro para
+  instrucciones no-aritmeticas
+- STORE preserva el registro de salida para escribir a memoria
+- NOP mantiene el estado
+
+Todos atravesaron verificacion + synthesis + LEC sin alterar la logica.
+
+### Pendiente (no bloqueante)
+- **Consolidacion RTL** (Opcion A, checklist arriba)
+- **Golden model ciclo-a-ciclo** (Python + Verdi) para el env exhaustivo del
+  top: modela el desfase opcode/operandos del pipeline. Ver
+  `uvm_tb/top_verification/docs/PIPELINE_TIMING.md`
+- **P&R (ICC2)** si se continua el flujo hasta layout
+
+## Tags
+
+| Tag                     | Hito                                              |
+| ----------------------- | ------------------------------------------------- |
+| `v1.0-rtl-complete`     | RTL de los 9 bloques + TBs standalone             |
+| `v2.0-uvm-verification` | Verificacion funcional UVM (8 bloques 100% + top) |
+| `v3.0-synthesis-lec`    | Flujo ASIC front-end: synthesis + LEC             |
