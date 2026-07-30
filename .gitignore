@@ -68,3 +68,14 @@ venv/
 **/.cov.*
 **/.vcs.*
 **/.*.verilog.xml
+
+# ---- Synthesis work (DC genera mucho ruido) ----
+syn/work/dc_work/
+syn/work/command.log
+syn/work/*.svf
+syn/work/filenames.log
+syn/work/*.pvl
+syn/work/*.syn
+syn/work/*.mr
+# Conservar reportes y netlist finales, ignorar intermedios:
+# (si quieres versionar reportes, no los ignores)

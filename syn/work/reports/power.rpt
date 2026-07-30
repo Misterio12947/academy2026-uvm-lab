@@ -1,0 +1,52 @@
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : top
+Version: V-2023.12-SP5-5
+Date   : Thu Jul 30 05:07:28 2026
+****************************************
+
+
+Library(s) Used:
+
+    sky130_fd_sc_hd__ss_100C_1v40 (File: /home/cesar.otamendi.v/Isolated/Academy2026/project/libs/sky130_fd_sc_hd__ss_100C_1v40.db)
+
+
+Operating Conditions: ss_100C_1v40   Library: sky130_fd_sc_hd__ss_100C_1v40
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 1.4  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+top                                    5.24e-02    0.348 4.41e+03    0.405 100.0
+  u_control (control)                  6.68e-03 5.89e-03   65.564 1.26e-02   3.1
+  reg_cmd (register_bank_WIDTH7)       1.59e-03 1.41e-02  117.189 1.58e-02   3.9
+  mux_out (mux2_registered_WIDTH8)     5.61e-03 3.17e-02  361.098 3.76e-02   9.3
+    u_reg_bank (register_bank_WIDTH16) 5.02e-03 3.05e-02  275.169 3.58e-02   8.8
+    u_mux2 (mux2_WIDTH16)              5.91e-04 1.20e-03   85.928 1.88e-03   0.5
+  u_memory (memory_WIDTH8)             1.71e-03    0.234 1.52e+03    0.237  58.5
+  reg_error (register_bank_WIDTH1_0)   5.91e-05 1.83e-03   18.743 1.91e-03   0.5
+  reg_zero (register_bank_WIDTH1_1)    1.69e-04 1.90e-03   23.701 2.09e-03   0.5
+  u_alu (ALU_WIDTH8)                   2.97e-02 2.43e-02 1.91e+03 5.59e-02  13.8
+  mux_B (mux4_registered_WIDTH8_0)     2.42e-03 1.72e-02  189.819 1.98e-02   4.9
+    u_reg_bank (register_bank_WIDTH8_0)
+                                       1.25e-03 1.59e-02  139.254 1.73e-02   4.3
+    u_mux4 (mux4_WIDTH8_0)             1.17e-03 1.32e-03   50.565 2.54e-03   0.6
+  mux_A (mux4_registered_WIDTH8_1)     4.43e-03 1.73e-02  203.575 2.19e-02   5.4
+    u_reg_bank (register_bank_WIDTH8_1)
+                                       2.64e-03 1.59e-02  146.099 1.87e-02   4.6
+    u_mux4 (mux4_WIDTH8_1)             1.14e-03 1.28e-03   50.571 2.48e-03   0.6
+1

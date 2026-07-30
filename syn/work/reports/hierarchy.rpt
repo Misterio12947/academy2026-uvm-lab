@@ -1,0 +1,40 @@
+ 
+****************************************
+Report : hierarchy
+Design : top
+Version: V-2023.12-SP5-5
+Date   : Thu Jul 30 05:05:59 2026
+****************************************
+
+Information: This design contains unmapped logic. (RPT-7)
+
+top
+    ALU_WIDTH8
+        GTECH_AND2                         gtech
+        GTECH_BUF                          gtech
+        GTECH_NOT                          gtech
+        GTECH_OR2                          gtech
+    control
+        GTECH_AND2                         gtech
+        GTECH_BUF                          gtech
+        GTECH_NOT                          gtech
+        GTECH_OR2                          gtech
+    memory_WIDTH8
+        GTECH_AND2                         gtech
+        GTECH_BUF                          gtech
+        GTECH_NOT                          gtech
+    mux2_registered_WIDTH8
+        mux2_WIDTH16
+            GTECH_BUF                      gtech
+            GTECH_NOT                      gtech
+        register_bank_WIDTH16
+    mux4_registered_WIDTH8
+        mux4_WIDTH8
+            GTECH_AND2                     gtech
+            GTECH_BUF                      gtech
+            GTECH_NOT                      gtech
+            GTECH_OR2                      gtech
+        register_bank_WIDTH8
+    register_bank_WIDTH1
+    register_bank_WIDTH7
+1

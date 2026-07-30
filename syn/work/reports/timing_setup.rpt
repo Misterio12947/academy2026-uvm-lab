@@ -1,0 +1,637 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 10
+Design : top
+Version: V-2023.12-SP5-5
+Date   : Thu Jul 30 05:07:28 2026
+****************************************
+
+Operating Conditions: ss_100C_1v40   Library: sky130_fd_sc_hd__ss_100C_1v40
+Wire Load Model Mode: top
+
+  Startpoint: mux_A/u_reg_bank/out_reg[7]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: reg_zero/out_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_A/u_reg_bank/out_reg[7]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_A/u_reg_bank/out_reg[7]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.17       1.97 f
+  mux_A/u_reg_bank/out[7] (register_bank_WIDTH8_1)        0.00       1.97 f
+  mux_A/out[7] (mux4_registered_WIDTH8_1)                 0.00       1.97 f
+  u_alu/in1[7] (ALU_WIDTH8)                               0.00       1.97 f
+  u_alu/U116/X (sky130_fd_sc_hd__buf_4)                   0.52       2.49 f
+  u_alu/U473/X (sky130_fd_sc_hd__xor2_1)                  0.50       2.99 f
+  u_alu/U474/Y (sky130_fd_sc_hd__nand2_2)                 0.30       3.29 r
+  u_alu/U497/Y (sky130_fd_sc_hd__o22ai_1)                 0.26       3.56 f
+  u_alu/U513/COUT (sky130_fd_sc_hd__fa_1)                 1.26       4.81 f
+  u_alu/U510/SUM (sky130_fd_sc_hd__fah_1)                 0.80       5.62 r
+  u_alu/U521/SUM (sky130_fd_sc_hd__fa_2)                  1.35       6.97 f
+  u_alu/U6/Y (sky130_fd_sc_hd__nor2_1)                    0.52       7.48 r
+  u_alu/U522/Y (sky130_fd_sc_hd__nor2_1)                  0.29       7.78 f
+  u_alu/U523/Y (sky130_fd_sc_hd__inv_1)                   0.12       7.90 r
+  u_alu/U621/Y (sky130_fd_sc_hd__o21ai_1)                 0.20       8.10 f
+  u_alu/U622/Y (sky130_fd_sc_hd__xnor2_1)                 0.40       8.50 r
+  u_alu/U638/Y (sky130_fd_sc_hd__nor2_1)                  0.23       8.73 f
+  u_alu/U59/Y (sky130_fd_sc_hd__nand3_1)                  0.16       8.89 r
+  u_alu/U696/Y (sky130_fd_sc_hd__o211ai_2)                0.22       9.11 f
+  u_alu/zero (ALU_WIDTH8)                                 0.00       9.11 f
+  reg_zero/in[0] (register_bank_WIDTH1_1)                 0.00       9.11 f
+  reg_zero/U2/Y (sky130_fd_sc_hd__nand2_1)                0.14       9.25 r
+  reg_zero/U5/Y (sky130_fd_sc_hd__nand2_1)                0.12       9.37 f
+  reg_zero/out_reg[0]/D (sky130_fd_sc_hd__dfrtp_1)        0.00       9.37 f
+  data arrival time                                                  9.37
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  reg_zero/out_reg[0]/CLK (sky130_fd_sc_hd__dfrtp_1)      0.00       9.80 r
+  library setup time                                     -0.43       9.37
+  data required time                                                 9.37
+  --------------------------------------------------------------------------
+  data required time                                                 9.37
+  data arrival time                                                 -9.37
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.01
+
+
+  Startpoint: mux_B/u_reg_bank/out_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[1]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_B/u_reg_bank/out_reg[4]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_B/u_reg_bank/out_reg[4]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.17       1.97 f
+  mux_B/u_reg_bank/out[4] (register_bank_WIDTH8_0)        0.00       1.97 f
+  mux_B/out[4] (mux4_registered_WIDTH8_0)                 0.00       1.97 f
+  u_alu/in2[4] (ALU_WIDTH8)                               0.00       1.97 f
+  u_alu/U143/X (sky130_fd_sc_hd__buf_6)                   0.41       2.38 f
+  u_alu/U134/Y (sky130_fd_sc_hd__inv_2)                   0.16       2.54 r
+  u_alu/U144/Y (sky130_fd_sc_hd__nand2_2)                 0.17       2.70 f
+  u_alu/U180/Y (sky130_fd_sc_hd__inv_1)                   0.20       2.90 r
+  u_alu/U191/Y (sky130_fd_sc_hd__nand4_2)                 0.21       3.11 f
+  u_alu/U93/Y (sky130_fd_sc_hd__nor2_1)                   0.29       3.40 r
+  u_alu/U192/Y (sky130_fd_sc_hd__nor2_1)                  0.19       3.59 f
+  u_alu/U221/Y (sky130_fd_sc_hd__inv_1)                   0.10       3.69 r
+  u_alu/U21/Y (sky130_fd_sc_hd__nand2_1)                  0.18       3.87 f
+  u_alu/U223/Y (sky130_fd_sc_hd__nor2_2)                  0.24       4.11 r
+  u_alu/U224/Y (sky130_fd_sc_hd__nor2_2)                  0.14       4.24 f
+  u_alu/U75/Y (sky130_fd_sc_hd__inv_1)                    0.12       4.36 r
+  u_alu/U248/Y (sky130_fd_sc_hd__nor2_1)                  0.10       4.46 f
+  u_alu/U249/Y (sky130_fd_sc_hd__nor2_1)                  0.27       4.73 r
+  u_alu/U261/Y (sky130_fd_sc_hd__nand2_1)                 0.23       4.96 f
+  u_alu/U262/Y (sky130_fd_sc_hd__nand2_2)                 0.18       5.15 r
+  u_alu/U25/Y (sky130_fd_sc_hd__inv_1)                    0.17       5.32 f
+  u_alu/U264/Y (sky130_fd_sc_hd__nand3_1)                 0.15       5.47 r
+  u_alu/U268/Y (sky130_fd_sc_hd__nand2_1)                 0.14       5.61 f
+  u_alu/U63/Y (sky130_fd_sc_hd__inv_1)                    0.18       5.78 r
+  u_alu/U269/Y (sky130_fd_sc_hd__nand2_4)                 0.20       5.98 f
+  u_alu/U287/Y (sky130_fd_sc_hd__o21ai_2)                 0.14       6.12 r
+  u_alu/U326/Y (sky130_fd_sc_hd__nand2_2)                 0.25       6.37 f
+  u_alu/U327/X (sky130_fd_sc_hd__buf_6)                   0.36       6.73 f
+  u_alu/U131/Y (sky130_fd_sc_hd__nand2_2)                 0.15       6.88 r
+  u_alu/U364/Y (sky130_fd_sc_hd__o22ai_2)                 0.16       7.03 f
+  u_alu/U365/Y (sky130_fd_sc_hd__inv_1)                   0.14       7.17 r
+  u_alu/U371/Y (sky130_fd_sc_hd__nand2_2)                 0.18       7.35 f
+  u_alu/U18/Y (sky130_fd_sc_hd__nor2_1)                   0.29       7.63 r
+  u_alu/U711/Y (sky130_fd_sc_hd__o21ai_1)                 0.22       7.86 f
+  u_alu/U712/Y (sky130_fd_sc_hd__inv_1)                   0.11       7.96 r
+  u_alu/U713/Y (sky130_fd_sc_hd__nand2_1)                 0.13       8.09 f
+  u_alu/U55/Y (sky130_fd_sc_hd__nand2_1)                  0.11       8.20 r
+  u_alu/U139/Y (sky130_fd_sc_hd__nand2_1)                 0.16       8.36 f
+  u_alu/U719/Y (sky130_fd_sc_hd__inv_1)                   0.12       8.48 r
+  u_alu/U725/Y (sky130_fd_sc_hd__o21ai_1)                 0.14       8.62 f
+  u_alu/out[1] (ALU_WIDTH8)                               0.00       8.62 f
+  mux_out/in1[1] (mux2_registered_WIDTH8)                 0.00       8.62 f
+  mux_out/u_mux2/din1[1] (mux2_WIDTH16)                   0.00       8.62 f
+  mux_out/u_mux2/U15/X (sky130_fd_sc_hd__a22o_1)          0.47       9.09 f
+  mux_out/u_mux2/dout[1] (mux2_WIDTH16)                   0.00       9.09 f
+  mux_out/u_reg_bank/in[1] (register_bank_WIDTH16)        0.00       9.09 f
+  mux_out/u_reg_bank/U15/Y (sky130_fd_sc_hd__nand2_1)     0.11       9.20 r
+  mux_out/u_reg_bank/U16/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.35 f
+  mux_out/u_reg_bank/out_reg[1]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.35 f
+  data arrival time                                                  9.35
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[1]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.44       9.36
+  data required time                                                 9.36
+  --------------------------------------------------------------------------
+  data required time                                                 9.36
+  data arrival time                                                 -9.35
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.01
+
+
+  Startpoint: mux_B/u_reg_bank/out_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_B/u_reg_bank/out_reg[0]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_B/u_reg_bank/out_reg[0]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.10       1.90 r
+  mux_B/u_reg_bank/out[0] (register_bank_WIDTH8_0)        0.00       1.90 r
+  mux_B/out[0] (mux4_registered_WIDTH8_0)                 0.00       1.90 r
+  u_alu/in2[0] (ALU_WIDTH8)                               0.00       1.90 r
+  u_alu/U136/Y (sky130_fd_sc_hd__inv_2)                   0.27       2.18 f
+  u_alu/U35/Y (sky130_fd_sc_hd__inv_2)                    0.46       2.64 r
+  u_alu/U114/X (sky130_fd_sc_hd__xor2_1)                  0.68       3.32 r
+  u_alu/U213/Y (sky130_fd_sc_hd__nand2_1)                 0.28       3.60 f
+  u_alu/U89/Y (sky130_fd_sc_hd__nand3_1)                  0.18       3.79 r
+  u_alu/U86/Y (sky130_fd_sc_hd__inv_1)                    0.12       3.91 f
+  u_alu/U80/Y (sky130_fd_sc_hd__nand3_2)                  0.14       4.04 r
+  u_alu/U138/Y (sky130_fd_sc_hd__nand2_2)                 0.24       4.28 f
+  u_alu/U36/Y (sky130_fd_sc_hd__nand2_1)                  0.20       4.49 r
+  u_alu/U72/Y (sky130_fd_sc_hd__nand2_1)                  0.14       4.62 f
+  u_alu/U71/Y (sky130_fd_sc_hd__inv_1)                    0.17       4.80 r
+  u_alu/U217/Y (sky130_fd_sc_hd__nand2_4)                 0.24       5.04 f
+  u_alu/U67/Y (sky130_fd_sc_hd__inv_2)                    0.17       5.21 r
+  u_alu/U277/Y (sky130_fd_sc_hd__nand2_2)                 0.13       5.34 f
+  u_alu/U282/Y (sky130_fd_sc_hd__a22oi_2)                 0.27       5.61 r
+  u_alu/U285/Y (sky130_fd_sc_hd__nand4_1)                 0.29       5.90 f
+  u_alu/U286/Y (sky130_fd_sc_hd__inv_1)                   0.18       6.08 r
+  u_alu/U287/Y (sky130_fd_sc_hd__o21ai_2)                 0.15       6.23 f
+  u_alu/U326/Y (sky130_fd_sc_hd__nand2_2)                 0.20       6.43 r
+  u_alu/U327/X (sky130_fd_sc_hd__buf_6)                   0.31       6.74 r
+  u_alu/U131/Y (sky130_fd_sc_hd__nand2_2)                 0.16       6.90 f
+  u_alu/U364/Y (sky130_fd_sc_hd__o22ai_2)                 0.19       7.09 r
+  u_alu/U365/Y (sky130_fd_sc_hd__inv_1)                   0.17       7.26 f
+  u_alu/U371/Y (sky130_fd_sc_hd__nand2_2)                 0.17       7.44 r
+  u_alu/U18/Y (sky130_fd_sc_hd__nor2_1)                   0.15       7.58 f
+  u_alu/U711/Y (sky130_fd_sc_hd__o21ai_1)                 0.25       7.84 r
+  u_alu/U712/Y (sky130_fd_sc_hd__inv_1)                   0.14       7.98 f
+  u_alu/U713/Y (sky130_fd_sc_hd__nand2_1)                 0.11       8.09 r
+  u_alu/U55/Y (sky130_fd_sc_hd__nand2_1)                  0.12       8.22 f
+  u_alu/U139/Y (sky130_fd_sc_hd__nand2_1)                 0.15       8.36 r
+  u_alu/U137/Y (sky130_fd_sc_hd__nand2_1)                 0.14       8.50 f
+  u_alu/U3/Y (sky130_fd_sc_hd__nand3_1)                   0.14       8.64 r
+  u_alu/U778/Y (sky130_fd_sc_hd__nand3_1)                 0.19       8.83 f
+  u_alu/out[0] (ALU_WIDTH8)                               0.00       8.83 f
+  mux_out/in1[0] (mux2_registered_WIDTH8)                 0.00       8.83 f
+  mux_out/u_mux2/din1[0] (mux2_WIDTH16)                   0.00       8.83 f
+  mux_out/u_mux2/U11/Y (sky130_fd_sc_hd__nand2_1)         0.15       8.99 r
+  mux_out/u_mux2/U12/Y (sky130_fd_sc_hd__nand2_1)         0.13       9.12 f
+  mux_out/u_mux2/dout[0] (mux2_WIDTH16)                   0.00       9.12 f
+  mux_out/u_reg_bank/in[0] (register_bank_WIDTH16)        0.00       9.12 f
+  mux_out/u_reg_bank/U11/Y (sky130_fd_sc_hd__nand2_1)     0.11       9.23 r
+  mux_out/u_reg_bank/U13/Y (sky130_fd_sc_hd__nand2_1)     0.12       9.36 f
+  mux_out/u_reg_bank/out_reg[0]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.36 f
+  data arrival time                                                  9.36
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[0]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.43       9.37
+  data required time                                                 9.37
+  --------------------------------------------------------------------------
+  data required time                                                 9.37
+  data arrival time                                                 -9.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.01
+
+
+  Startpoint: mux_A/u_reg_bank/out_reg[7]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[13]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_A/u_reg_bank/out_reg[7]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_A/u_reg_bank/out_reg[7]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.17       1.97 f
+  mux_A/u_reg_bank/out[7] (register_bank_WIDTH8_1)        0.00       1.97 f
+  mux_A/out[7] (mux4_registered_WIDTH8_1)                 0.00       1.97 f
+  u_alu/in1[7] (ALU_WIDTH8)                               0.00       1.97 f
+  u_alu/U116/X (sky130_fd_sc_hd__buf_4)                   0.52       2.49 f
+  u_alu/U473/X (sky130_fd_sc_hd__xor2_1)                  0.50       2.99 f
+  u_alu/U474/Y (sky130_fd_sc_hd__nand2_2)                 0.30       3.29 r
+  u_alu/U497/Y (sky130_fd_sc_hd__o22ai_1)                 0.26       3.56 f
+  u_alu/U513/COUT (sky130_fd_sc_hd__fa_1)                 1.26       4.81 f
+  u_alu/U510/SUM (sky130_fd_sc_hd__fah_1)                 0.80       5.62 r
+  u_alu/U521/SUM (sky130_fd_sc_hd__fa_2)                  1.35       6.97 f
+  u_alu/U6/Y (sky130_fd_sc_hd__nor2_1)                    0.52       7.48 r
+  u_alu/U522/Y (sky130_fd_sc_hd__nor2_1)                  0.29       7.78 f
+  u_alu/U523/Y (sky130_fd_sc_hd__inv_1)                   0.12       7.90 r
+  u_alu/U621/Y (sky130_fd_sc_hd__o21ai_1)                 0.20       8.10 f
+  u_alu/U622/Y (sky130_fd_sc_hd__xnor2_1)                 0.40       8.50 r
+  u_alu/U747/Y (sky130_fd_sc_hd__inv_1)                   0.21       8.71 f
+  u_alu/U748/Y (sky130_fd_sc_hd__o21ai_1)                 0.25       8.96 r
+  u_alu/out[13] (ALU_WIDTH8)                              0.00       8.96 r
+  mux_out/in1[13] (mux2_registered_WIDTH8)                0.00       8.96 r
+  mux_out/u_mux2/din1[13] (mux2_WIDTH16)                  0.00       8.96 r
+  mux_out/u_mux2/U20/Y (sky130_fd_sc_hd__nand2_1)         0.20       9.16 f
+  mux_out/u_mux2/U22/Y (sky130_fd_sc_hd__nand2_1)         0.13       9.28 r
+  mux_out/u_mux2/dout[13] (mux2_WIDTH16)                  0.00       9.28 r
+  mux_out/u_reg_bank/in[13] (register_bank_WIDTH16)       0.00       9.28 r
+  mux_out/u_reg_bank/U45/Y (sky130_fd_sc_hd__nand2_1)     0.12       9.40 f
+  mux_out/u_reg_bank/U46/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.56 r
+  mux_out/u_reg_bank/out_reg[13]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.56 r
+  data arrival time                                                  9.56
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[13]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.20       9.60
+  data required time                                                 9.60
+  --------------------------------------------------------------------------
+  data required time                                                 9.60
+  data arrival time                                                 -9.56
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+  Startpoint: mux_B/u_reg_bank/out_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[7]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_B/u_reg_bank/out_reg[0]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_B/u_reg_bank/out_reg[0]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.10       1.90 r
+  mux_B/u_reg_bank/out[0] (register_bank_WIDTH8_0)        0.00       1.90 r
+  mux_B/out[0] (mux4_registered_WIDTH8_0)                 0.00       1.90 r
+  u_alu/in2[0] (ALU_WIDTH8)                               0.00       1.90 r
+  u_alu/U136/Y (sky130_fd_sc_hd__inv_2)                   0.27       2.18 f
+  u_alu/U35/Y (sky130_fd_sc_hd__inv_2)                    0.46       2.64 r
+  u_alu/U345/Y (sky130_fd_sc_hd__nand2_1)                 0.35       2.99 f
+  u_alu/U346/Y (sky130_fd_sc_hd__nor2_1)                  0.28       3.27 r
+  u_alu/U348/Y (sky130_fd_sc_hd__o21ai_1)                 0.33       3.60 f
+  u_alu/U445/Y (sky130_fd_sc_hd__a21oi_1)                 0.51       4.11 r
+  u_alu/U447/Y (sky130_fd_sc_hd__o21ai_1)                 0.36       4.47 f
+  u_alu/U448/X (sky130_fd_sc_hd__a21o_1)                  0.49       4.95 f
+  u_alu/U452/COUT (sky130_fd_sc_hd__fa_1)                 1.32       6.28 f
+  u_alu/U451/X (sky130_fd_sc_hd__a21o_1)                  0.52       6.79 f
+  u_alu/U4/SUM (sky130_fd_sc_hd__fa_2)                    1.34       8.13 f
+  u_alu/U739/Y (sky130_fd_sc_hd__nand2_1)                 0.17       8.31 r
+  u_alu/U740/Y (sky130_fd_sc_hd__nand3_1)                 0.23       8.54 f
+  u_alu/out[7] (ALU_WIDTH8)                               0.00       8.54 f
+  mux_out/in1[7] (mux2_registered_WIDTH8)                 0.00       8.54 f
+  mux_out/u_mux2/din1[7] (mux2_WIDTH16)                   0.00       8.54 f
+  mux_out/u_mux2/U16/X (sky130_fd_sc_hd__a22o_1)          0.49       9.02 f
+  mux_out/u_mux2/dout[7] (mux2_WIDTH16)                   0.00       9.02 f
+  mux_out/u_reg_bank/in[7] (register_bank_WIDTH16)        0.00       9.02 f
+  mux_out/u_reg_bank/U27/Y (sky130_fd_sc_hd__nand2_1)     0.11       9.13 r
+  mux_out/u_reg_bank/U28/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.28 f
+  mux_out/u_reg_bank/out_reg[7]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.28 f
+  data arrival time                                                  9.28
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[7]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.44       9.36
+  data required time                                                 9.36
+  --------------------------------------------------------------------------
+  data required time                                                 9.36
+  data arrival time                                                 -9.28
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.08
+
+
+  Startpoint: mux_B/u_reg_bank/out_reg[7]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[15]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_B/u_reg_bank/out_reg[7]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_B/u_reg_bank/out_reg[7]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.07       1.87 r
+  mux_B/u_reg_bank/out[7] (register_bank_WIDTH8_0)        0.00       1.87 r
+  mux_B/out[7] (mux4_registered_WIDTH8_0)                 0.00       1.87 r
+  u_alu/in2[7] (ALU_WIDTH8)                               0.00       1.87 r
+  u_alu/U123/X (sky130_fd_sc_hd__clkbuf_1)                0.75       2.62 r
+  u_alu/U427/Y (sky130_fd_sc_hd__xnor2_1)                 0.65       3.27 r
+  u_alu/U479/Y (sky130_fd_sc_hd__o22ai_1)                 0.48       3.74 f
+  u_alu/U628/COUT (sky130_fd_sc_hd__fa_1)                 1.32       5.06 f
+  u_alu/U686/SUM (sky130_fd_sc_hd__fa_1)                  1.61       6.67 f
+  u_alu/U629/Y (sky130_fd_sc_hd__nor2_1)                  0.39       7.06 r
+  u_alu/U82/Y (sky130_fd_sc_hd__nor2_1)                   0.25       7.30 f
+  u_alu/U682/Y (sky130_fd_sc_hd__a21oi_1)                 0.31       7.61 r
+  u_alu/U33/X (sky130_fd_sc_hd__o21a_1)                   0.35       7.96 r
+  u_alu/U64/Y (sky130_fd_sc_hd__nand2_1)                  0.17       8.13 f
+  u_alu/U690/Y (sky130_fd_sc_hd__nand2_1)                 0.15       8.28 r
+  u_alu/U61/Y (sky130_fd_sc_hd__nand2_1)                  0.17       8.46 f
+  u_alu/U751/Y (sky130_fd_sc_hd__inv_1)                   0.12       8.58 r
+  u_alu/U752/Y (sky130_fd_sc_hd__o21ai_1)                 0.14       8.72 f
+  u_alu/out[15] (ALU_WIDTH8)                              0.00       8.72 f
+  mux_out/in1[15] (mux2_registered_WIDTH8)                0.00       8.72 f
+  mux_out/u_mux2/din1[15] (mux2_WIDTH16)                  0.00       8.72 f
+  mux_out/u_mux2/U26/Y (sky130_fd_sc_hd__nand2_1)         0.16       8.88 r
+  mux_out/u_mux2/U28/Y (sky130_fd_sc_hd__nand2_1)         0.13       9.02 f
+  mux_out/u_mux2/dout[15] (mux2_WIDTH16)                  0.00       9.02 f
+  mux_out/u_reg_bank/in[15] (register_bank_WIDTH16)       0.00       9.02 f
+  mux_out/u_reg_bank/U48/Y (sky130_fd_sc_hd__nand2_1)     0.11       9.12 r
+  mux_out/u_reg_bank/U49/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.27 f
+  mux_out/u_reg_bank/out_reg[15]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.27 f
+  data arrival time                                                  9.27
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[15]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.44       9.36
+  data required time                                                 9.36
+  --------------------------------------------------------------------------
+  data required time                                                 9.36
+  data arrival time                                                 -9.27
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.09
+
+
+  Startpoint: mux_A/u_reg_bank/out_reg[6]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[10]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_A/u_reg_bank/out_reg[6]/CLK (sky130_fd_sc_hd__dfrtp_2)
+                                                          0.00       0.80 r
+  mux_A/u_reg_bank/out_reg[6]/Q (sky130_fd_sc_hd__dfrtp_2)
+                                                          1.48       2.28 f
+  mux_A/u_reg_bank/out[6] (register_bank_WIDTH8_1)        0.00       2.28 f
+  mux_A/out[6] (mux4_registered_WIDTH8_1)                 0.00       2.28 f
+  u_alu/in1[6] (ALU_WIDTH8)                               0.00       2.28 f
+  u_alu/U471/Y (sky130_fd_sc_hd__xnor2_4)                 0.72       3.00 r
+  u_alu/U474/Y (sky130_fd_sc_hd__nand2_2)                 0.45       3.45 f
+  u_alu/U542/Y (sky130_fd_sc_hd__o22ai_1)                 0.44       3.89 r
+  u_alu/U553/SUM (sky130_fd_sc_hd__fa_1)                  1.47       5.35 f
+  u_alu/U606/SUM (sky130_fd_sc_hd__fah_1)                 0.75       6.10 f
+  u_alu/U607/Y (sky130_fd_sc_hd__nor2_1)                  0.20       6.30 r
+  u_alu/U608/Y (sky130_fd_sc_hd__inv_1)                   0.17       6.47 f
+  u_alu/U611/Y (sky130_fd_sc_hd__a21oi_2)                 0.37       6.84 r
+  u_alu/U70/Y (sky130_fd_sc_hd__o21ai_1)                  0.27       7.10 f
+  u_alu/U667/Y (sky130_fd_sc_hd__inv_1)                   0.19       7.29 r
+  u_alu/U674/Y (sky130_fd_sc_hd__o21ai_1)                 0.24       7.53 f
+  u_alu/U675/Y (sky130_fd_sc_hd__xnor2_1)                 0.34       7.87 f
+  u_alu/U745/Y (sky130_fd_sc_hd__inv_1)                   0.13       8.00 r
+  u_alu/U746/Y (sky130_fd_sc_hd__o21ai_1)                 0.13       8.13 f
+  u_alu/out[10] (ALU_WIDTH8)                              0.00       8.13 f
+  mux_out/in1[10] (mux2_registered_WIDTH8)                0.00       8.13 f
+  mux_out/u_mux2/din1[10] (mux2_WIDTH16)                  0.00       8.13 f
+  mux_out/u_mux2/U1/X (sky130_fd_sc_hd__mux2_2)           0.85       8.98 f
+  mux_out/u_mux2/dout[10] (mux2_WIDTH16)                  0.00       8.98 f
+  mux_out/u_reg_bank/in[10] (register_bank_WIDTH16)       0.00       8.98 f
+  mux_out/u_reg_bank/U36/Y (sky130_fd_sc_hd__nand2_1)     0.13       9.11 r
+  mux_out/u_reg_bank/U37/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.25 f
+  mux_out/u_reg_bank/out_reg[10]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.25 f
+  data arrival time                                                  9.25
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[10]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.44       9.36
+  data required time                                                 9.36
+  --------------------------------------------------------------------------
+  data required time                                                 9.36
+  data arrival time                                                 -9.25
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.10
+
+
+  Startpoint: mux_B/u_reg_bank/out_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_B/u_reg_bank/out_reg[0]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_B/u_reg_bank/out_reg[0]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.10       1.90 r
+  mux_B/u_reg_bank/out[0] (register_bank_WIDTH8_0)        0.00       1.90 r
+  mux_B/out[0] (mux4_registered_WIDTH8_0)                 0.00       1.90 r
+  u_alu/in2[0] (ALU_WIDTH8)                               0.00       1.90 r
+  u_alu/U136/Y (sky130_fd_sc_hd__inv_2)                   0.27       2.18 f
+  u_alu/U35/Y (sky130_fd_sc_hd__inv_2)                    0.46       2.64 r
+  u_alu/U345/Y (sky130_fd_sc_hd__nand2_1)                 0.35       2.99 f
+  u_alu/U346/Y (sky130_fd_sc_hd__nor2_1)                  0.28       3.27 r
+  u_alu/U348/Y (sky130_fd_sc_hd__o21ai_1)                 0.33       3.60 f
+  u_alu/U445/Y (sky130_fd_sc_hd__a21oi_1)                 0.51       4.11 r
+  u_alu/U447/Y (sky130_fd_sc_hd__o21ai_1)                 0.36       4.47 f
+  u_alu/U448/X (sky130_fd_sc_hd__a21o_1)                  0.49       4.95 f
+  u_alu/U452/COUT (sky130_fd_sc_hd__fa_1)                 1.32       6.28 f
+  u_alu/U451/X (sky130_fd_sc_hd__a21o_1)                  0.52       6.79 f
+  u_alu/U4/COUT (sky130_fd_sc_hd__fa_2)                   1.00       7.79 f
+  u_alu/U731/Y (sky130_fd_sc_hd__inv_1)                   0.13       7.92 r
+  u_alu/U30/Y (sky130_fd_sc_hd__a21oi_1)                  0.36       8.28 f
+  u_alu/U787/Y (sky130_fd_sc_hd__inv_1)                   0.22       8.50 r
+  u_alu/U788/Y (sky130_fd_sc_hd__a21oi_1)                 0.10       8.59 f
+  u_alu/U68/Y (sky130_fd_sc_hd__o21ai_0)                  0.15       8.74 r
+  u_alu/out[8] (ALU_WIDTH8)                               0.00       8.74 r
+  mux_out/in1[8] (mux2_registered_WIDTH8)                 0.00       8.74 r
+  mux_out/u_mux2/din1[8] (mux2_WIDTH16)                   0.00       8.74 r
+  mux_out/u_mux2/U8/X (sky130_fd_sc_hd__mux2_2)           0.47       9.22 r
+  mux_out/u_mux2/dout[8] (mux2_WIDTH16)                   0.00       9.22 r
+  mux_out/u_reg_bank/in[8] (register_bank_WIDTH16)        0.00       9.22 r
+  mux_out/u_reg_bank/U30/Y (sky130_fd_sc_hd__nand2_1)     0.12       9.34 f
+  mux_out/u_reg_bank/U31/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.49 r
+  mux_out/u_reg_bank/out_reg[8]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.49 r
+  data arrival time                                                  9.49
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[8]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.20       9.60
+  data required time                                                 9.60
+  --------------------------------------------------------------------------
+  data required time                                                 9.60
+  data arrival time                                                 -9.49
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.11
+
+
+  Startpoint: mux_A/u_reg_bank/out_reg[7]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[14]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_A/u_reg_bank/out_reg[7]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       0.80 r
+  mux_A/u_reg_bank/out_reg[7]/Q (sky130_fd_sc_hd__dfrtp_1)
+                                                          1.17       1.97 f
+  mux_A/u_reg_bank/out[7] (register_bank_WIDTH8_1)        0.00       1.97 f
+  mux_A/out[7] (mux4_registered_WIDTH8_1)                 0.00       1.97 f
+  u_alu/in1[7] (ALU_WIDTH8)                               0.00       1.97 f
+  u_alu/U116/X (sky130_fd_sc_hd__buf_4)                   0.52       2.49 f
+  u_alu/U473/X (sky130_fd_sc_hd__xor2_1)                  0.50       2.99 f
+  u_alu/U474/Y (sky130_fd_sc_hd__nand2_2)                 0.30       3.29 r
+  u_alu/U497/Y (sky130_fd_sc_hd__o22ai_1)                 0.26       3.56 f
+  u_alu/U513/COUT (sky130_fd_sc_hd__fa_1)                 1.26       4.81 f
+  u_alu/U510/SUM (sky130_fd_sc_hd__fah_1)                 0.75       5.56 f
+  u_alu/U521/SUM (sky130_fd_sc_hd__fa_2)                  1.57       7.13 r
+  u_alu/U618/Y (sky130_fd_sc_hd__nand2_2)                 0.21       7.34 f
+  u_alu/U133/Y (sky130_fd_sc_hd__o21ai_1)                 0.35       7.69 r
+  u_alu/U635/Y (sky130_fd_sc_hd__a21oi_1)                 0.28       7.97 f
+  u_alu/U636/Y (sky130_fd_sc_hd__o21ai_2)                 0.16       8.13 r
+  u_alu/U637/Y (sky130_fd_sc_hd__xnor2_1)                 0.36       8.49 r
+  u_alu/U749/Y (sky130_fd_sc_hd__inv_1)                   0.21       8.70 f
+  u_alu/U750/Y (sky130_fd_sc_hd__o21ai_1)                 0.25       8.95 r
+  u_alu/out[14] (ALU_WIDTH8)                              0.00       8.95 r
+  mux_out/in1[14] (mux2_registered_WIDTH8)                0.00       8.95 r
+  mux_out/u_mux2/din1[14] (mux2_WIDTH16)                  0.00       8.95 r
+  mux_out/u_mux2/U23/Y (sky130_fd_sc_hd__nand2_1)         0.20       9.15 f
+  mux_out/u_mux2/U25/Y (sky130_fd_sc_hd__nand2_1)         0.13       9.27 r
+  mux_out/u_mux2/dout[14] (mux2_WIDTH16)                  0.00       9.27 r
+  mux_out/u_reg_bank/in[14] (register_bank_WIDTH16)       0.00       9.27 r
+  mux_out/u_reg_bank/U3/Y (sky130_fd_sc_hd__nand2_1)      0.13       9.40 f
+  mux_out/u_reg_bank/U5/Y (sky130_fd_sc_hd__nand2_1)      0.12       9.52 r
+  mux_out/u_reg_bank/out_reg[14]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.52 r
+  data arrival time                                                  9.52
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[14]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.17       9.63
+  data required time                                                 9.63
+  --------------------------------------------------------------------------
+  data required time                                                 9.63
+  data arrival time                                                 -9.52
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.12
+
+
+  Startpoint: mux_A/u_reg_bank/out_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: mux_out/u_reg_bank/out_reg[12]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.80       0.80
+  mux_A/u_reg_bank/out_reg[4]/CLK (sky130_fd_sc_hd__dfrtp_2)
+                                                          0.00       0.80 r
+  mux_A/u_reg_bank/out_reg[4]/Q (sky130_fd_sc_hd__dfrtp_2)
+                                                          1.46       2.26 f
+  mux_A/u_reg_bank/out[4] (register_bank_WIDTH8_1)        0.00       2.26 f
+  mux_A/out[4] (mux4_registered_WIDTH8_1)                 0.00       2.26 f
+  u_alu/in1[4] (ALU_WIDTH8)                               0.00       2.26 f
+  u_alu/U466/Y (sky130_fd_sc_hd__xnor2_4)                 0.68       2.94 r
+  u_alu/U11/Y (sky130_fd_sc_hd__nand2_1)                  0.45       3.39 f
+  u_alu/U17/Y (sky130_fd_sc_hd__o22ai_1)                  0.63       4.02 r
+  u_alu/U95/Y (sky130_fd_sc_hd__nand2_1)                  0.31       4.33 f
+  u_alu/U91/Y (sky130_fd_sc_hd__nand2_1)                  0.19       4.52 r
+  u_alu/U9/SUM (sky130_fd_sc_hd__fa_1)                    1.31       5.83 f
+  u_alu/U537/SUM (sky130_fd_sc_hd__fah_1)                 0.75       6.58 f
+  u_alu/U538/Y (sky130_fd_sc_hd__nor2_1)                  0.34       6.93 r
+  u_alu/U615/Y (sky130_fd_sc_hd__o21ai_1)                 0.26       7.18 f
+  u_alu/U616/X (sky130_fd_sc_hd__a21o_1)                  0.44       7.63 f
+  u_alu/U617/Y (sky130_fd_sc_hd__inv_2)                   0.20       7.83 r
+  u_alu/U692/Y (sky130_fd_sc_hd__o21ai_2)                 0.20       8.04 f
+  u_alu/U28/X (sky130_fd_sc_hd__xor2_1)                   0.36       8.39 r
+  u_alu/U753/Y (sky130_fd_sc_hd__o21ai_1)                 0.25       8.65 f
+  u_alu/out[12] (ALU_WIDTH8)                              0.00       8.65 f
+  mux_out/in1[12] (mux2_registered_WIDTH8)                0.00       8.65 f
+  mux_out/u_mux2/din1[12] (mux2_WIDTH16)                  0.00       8.65 f
+  mux_out/u_mux2/U17/Y (sky130_fd_sc_hd__nand2_1)         0.16       8.81 r
+  mux_out/u_mux2/U19/Y (sky130_fd_sc_hd__nand2_1)         0.13       8.95 f
+  mux_out/u_mux2/dout[12] (mux2_WIDTH16)                  0.00       8.95 f
+  mux_out/u_reg_bank/in[12] (register_bank_WIDTH16)       0.00       8.95 f
+  mux_out/u_reg_bank/U42/Y (sky130_fd_sc_hd__nand2_1)     0.11       9.05 r
+  mux_out/u_reg_bank/U43/Y (sky130_fd_sc_hd__o21ai_1)     0.15       9.20 f
+  mux_out/u_reg_bank/out_reg[12]/D (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.20 f
+  data arrival time                                                  9.20
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.80      10.80
+  clock uncertainty                                      -1.00       9.80
+  mux_out/u_reg_bank/out_reg[12]/CLK (sky130_fd_sc_hd__dfrtp_1)
+                                                          0.00       9.80 r
+  library setup time                                     -0.44       9.36
+  data required time                                                 9.36
+  --------------------------------------------------------------------------
+  data required time                                                 9.36
+  data arrival time                                                 -9.20
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.16
+
+
+1

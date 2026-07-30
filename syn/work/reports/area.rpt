@@ -1,0 +1,58 @@
+ 
+****************************************
+Report : area
+Design : top
+Version: V-2023.12-SP5-5
+Date   : Thu Jul 30 05:07:28 2026
+****************************************
+
+Library(s) Used:
+
+    sky130_fd_sc_hd__ss_100C_1v40 (File: /home/cesar.otamendi.v/Isolated/Academy2026/project/libs/sky130_fd_sc_hd__ss_100C_1v40.db)
+
+Number of ports:                          535
+Number of nets:                          1977
+Number of cells:                         1452
+Number of combinational cells:           1266
+Number of sequential cells:               171
+Number of macros/black boxes:               0
+Number of buf/inv:                        248
+Number of references:                      10
+
+Combinational area:               7923.849459
+Buf/Inv area:                     1003.462373
+Noncombinational area:            3640.991926
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                 11564.841385
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area           Local cell area
+                                  -------------------  ---------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-     Noncombi-  Black-
+                                  Total       Total    national   national   boxes   Design
+--------------------------------  ----------  -------  ---------  ---------  ------  ------------------------
+top                               11564.8414    100.0     5.0048     0.0000  0.0000  top
+mux_A                               499.2288      4.3    10.0096     0.0000  0.0000  mux4_registered_WIDTH8_1
+mux_A/u_mux4                        172.6656      1.5   172.6656     0.0000  0.0000  mux4_WIDTH8_1
+mux_A/u_reg_bank                    316.5536      2.7   113.8592   202.6944  0.0000  register_bank_WIDTH8_1
+mux_B                               476.7072      4.1     0.0000     0.0000  0.0000  mux4_registered_WIDTH8_0
+mux_B/u_mux4                        172.6656      1.5   172.6656     0.0000  0.0000  mux4_WIDTH8_0
+mux_B/u_reg_bank                    304.0416      2.6   103.8496   200.1920  0.0000  register_bank_WIDTH8_0
+mux_out                             798.2656      6.9     0.0000     0.0000  0.0000  mux2_registered_WIDTH8
+mux_out/u_mux2                      186.4288      1.6   186.4288     0.0000  0.0000  mux2_WIDTH16
+mux_out/u_reg_bank                  611.8368      5.3   211.4528   400.3840  0.0000  register_bank_WIDTH16
+reg_cmd                             243.9840      2.1    68.8160   175.1680  0.0000  register_bank_WIDTH7
+reg_error                            41.2896      0.4    16.2656    25.0240  0.0000  register_bank_WIDTH1_0
+reg_zero                             46.2944      0.4    21.2704    25.0240  0.0000  register_bank_WIDTH1_1
+u_alu                              4833.3855     41.8  4833.3855     0.0000  0.0000  ALU_WIDTH8
+u_control                           166.4096      1.4   116.3616    50.0480  0.0000  control
+u_memory                           4454.2719     38.5  1891.8144  2562.4575  0.0000  memory_WIDTH8
+--------------------------------  ----------  -------  ---------  ---------  ------  ------------------------
+Total                                                  7923.8495  3640.9919  0.0000
+
+1

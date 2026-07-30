@@ -1,0 +1,52 @@
+  Allocating blocks in 'DW02_mult_A_width8_B_width8'
+  Allocating blocks in 'DW_div_uns_a_width8_b_width8'
+Information: Updating design information... (UID-85)
+
+Information: Checking generated_clocks...
+
+Information: Checking loops...
+
+Information: Checking no_input_delay...
+
+Information: Checking unconstrained_endpoints...
+
+Information: Checking pulse_clock_cell_type...
+
+Information: Checking no_driving_cell...
+
+Information: Checking partial_input_delay...
+Warning: there are 32 input ports that only have partial input delay specified. (TIM-212)
+--------------------
+rst
+cmd_in[6]
+cmd_in[5]
+cmd_in[4]
+cmd_in[3]
+cmd_in[2]
+cmd_in[1]
+cmd_in[0]
+din_1[7]
+din_1[6]
+din_1[5]
+din_1[4]
+din_1[3]
+din_1[2]
+din_1[1]
+din_1[0]
+din_2[7]
+din_2[6]
+din_2[5]
+din_2[4]
+din_2[3]
+din_2[2]
+din_2[1]
+din_2[0]
+din_3[7]
+din_3[6]
+din_3[5]
+din_3[4]
+din_3[3]
+din_3[2]
+din_3[1]
+din_3[0]
+1

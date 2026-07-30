@@ -1,0 +1,33 @@
+ 
+****************************************
+check_design summary:
+Version:     V-2023.12-SP5-5
+Date:        Thu Jul 30 05:05:59 2026
+****************************************
+
+                   Name                                            Total
+--------------------------------------------------------------------------------
+Inputs/Outputs                                                     10
+    Unconnected ports (LINT-28)                                     5
+    Feedthrough (LINT-29)                                           4
+    Shorted outputs (LINT-31)                                       1
+
+Cells                                                               4
+    Cells do not drive (LINT-1)                                     4
+--------------------------------------------------------------------------------
+
+Warning: In design 'ALU_WIDTH8', cell 'C147' does not drive any nets. (LINT-1)
+Warning: In design 'ALU_WIDTH8', cell 'C148' does not drive any nets. (LINT-1)
+Warning: In design 'ALU_WIDTH8', cell 'C149' does not drive any nets. (LINT-1)
+Warning: In design 'ALU_WIDTH8', cell 'C153' does not drive any nets. (LINT-1)
+Warning: In design 'memory_WIDTH8', port 'memoryAddress[7]' is not connected to any nets. (LINT-28)
+Warning: In design 'memory_WIDTH8', port 'memoryAddress[6]' is not connected to any nets. (LINT-28)
+Warning: In design 'memory_WIDTH8', port 'memoryAddress[5]' is not connected to any nets. (LINT-28)
+Warning: In design 'memory_WIDTH8', port 'memoryAddress[4]' is not connected to any nets. (LINT-28)
+Warning: In design 'memory_WIDTH8', port 'memoryAddress[3]' is not connected to any nets. (LINT-28)
+Warning: In design 'control', input port 'cmd_in[6]' is connected directly to output port 'in_select_a[1]'. (LINT-29)
+Warning: In design 'control', input port 'cmd_in[5]' is connected directly to output port 'in_select_a[0]'. (LINT-29)
+Warning: In design 'control', input port 'cmd_in[4]' is connected directly to output port 'in_select_b[1]'. (LINT-29)
+Warning: In design 'control', input port 'cmd_in[3]' is connected directly to output port 'in_select_b[0]'. (LINT-29)
+Warning: In design 'control', output port 'memoryRead' is connected directly to output port 'selmux2'. (LINT-31)
+1

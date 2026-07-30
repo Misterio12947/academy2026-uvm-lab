@@ -1,0 +1,345 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay min
+        -max_paths 10
+Design : top
+Version: V-2023.12-SP5-5
+Date   : Thu Jul 30 05:07:28 2026
+****************************************
+
+Operating Conditions: ss_100C_1v40   Library: sky130_fd_sc_hd__ss_100C_1v40
+Wire Load Model Mode: top
+
+  Startpoint: u_memory/mem_array_reg[2][12]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][12]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][12]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][12]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U46/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][12]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][12]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][11]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][11]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][11]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][11]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U73/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][11]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][11]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][10]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][10]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][10]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][10]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U56/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][10]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][10]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][9]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][9]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][9]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][9]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U75/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][9]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][9]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][8]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][8]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][8]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U50/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][8]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][8]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][7]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][7]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][7]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][7]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U77/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][7]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][7]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][6]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][6]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][6]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][6]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U52/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][6]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][6]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][3]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][3]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][3]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][3]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U81/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][3]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][3]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][2]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][2]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][2]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U66/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][2]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][2]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+  Startpoint: u_memory/mem_array_reg[2][1]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_memory/mem_array_reg[2][1]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][1]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  u_memory/mem_array_reg[2][1]/Q (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.79       0.79 f
+  u_memory/U41/Y (sky130_fd_sc_hd__o2bb2ai_1)             0.29       1.08 f
+  u_memory/mem_array_reg[2][1]/D (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       1.08 f
+  data arrival time                                                  1.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_memory/mem_array_reg[2][1]/CLK (sky130_fd_sc_hd__dfxtp_1)
+                                                          0.00       0.00 r
+  library hold time                                      -0.16      -0.16
+  data required time                                                -0.16
+  --------------------------------------------------------------------------
+  data required time                                                -0.16
+  data arrival time                                                 -1.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.24
+
+
+1
