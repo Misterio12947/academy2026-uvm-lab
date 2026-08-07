@@ -1,9 +1,9 @@
 // Directorios de includes
 +incdir+../tb
-+incdir+../rtl
++incdir+../../../rtl
 
 // RTL
-../rtl/memory.sv
+../../../rtl/memory.sv
 
 // Verificacion
 ../tb/memory_if.sv

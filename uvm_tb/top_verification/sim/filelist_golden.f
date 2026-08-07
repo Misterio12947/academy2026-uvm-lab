@@ -6,17 +6,17 @@
 //   ../../../rtl/<archivo>.sv
 // Si aun usas las copias en uvm_tb (Opcion C), usa estas rutas:
 
-+incdir+../rtl
++incdir+../../../rtl
 
 // Dependencias RTL: todos los submodulos ya firmados
-../../mux4_verification/rtl/mux4.sv
-../../mux4_registered_verification/rtl/mux4_registered.sv
-../../mux2_verification/rtl/mux2.sv
-../../mux2_registered_verification/rtl/mux2_registered.sv
-../../regbank_verification/rtl/register_bank.sv
-../../memory_verification/rtl/memory.sv
-../../alu_verification/rtl/alu.sv
-../../control_verification/rtl/control.sv
+../../../rtl/mux4.sv
+../../../rtl/mux4_registered.sv
+../../../rtl/mux2.sv
+../../../rtl/mux2_registered.sv
+../../../rtl/register_bank.sv
+../../../rtl/memory.sv
+../../../rtl/alu.sv
+../../../rtl/control.sv
 
 // RTL del bloque top
-../rtl/top.sv
+../../../rtl/top.sv

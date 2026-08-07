@@ -1,9 +1,9 @@
 // Directorios de includes
 +incdir+../tb
-+incdir+../rtl
++incdir+../../../rtl
 
 // RTL
-../rtl/mux2.sv
+../../../rtl/mux2.sv
 
 // Verificacion: interface, paquetes y top
 ../tb/mux2_if.sv

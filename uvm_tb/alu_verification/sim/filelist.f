@@ -1,9 +1,9 @@
 // Directorios de includes
 +incdir+../tb
-+incdir+../rtl
++incdir+../../../rtl
 
 // RTL
-../rtl/alu.sv
+../../../rtl/alu.sv
 
 // Verificacion: interface, paquetes y top
 ../tb/alu_if.sv

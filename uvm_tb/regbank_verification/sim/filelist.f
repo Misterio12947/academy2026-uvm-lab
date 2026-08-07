@@ -1,9 +1,9 @@
 // Directorios de includes
 +incdir+../tb
-+incdir+../rtl
++incdir+../../../rtl
 
 // RTL
-../rtl/register_bank.sv
+../../../rtl/register_bank.sv
 
 // Verificacion
 ../tb/regbank_if.sv

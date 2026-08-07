@@ -1,13 +1,13 @@
 // Directorios de includes
 +incdir+../tb
-+incdir+../rtl
++incdir+../../../rtl
 
 // Dependencias RTL (single source of truth, sin duplicacion)
-../../mux4_verification/rtl/mux4.sv
-../../regbank_verification/rtl/register_bank.sv
+../../../rtl/mux4.sv
+../../../rtl/register_bank.sv
 
 // RTL del bloque
-../rtl/mux4_registered.sv
+../../../rtl/mux4_registered.sv
 
 // Verificacion: interface, paquetes y top
 ../tb/mux4_registered_if.sv

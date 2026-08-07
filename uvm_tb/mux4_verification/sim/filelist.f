@@ -1,9 +1,9 @@
 // Directorios de includes
 +incdir+../tb
-+incdir+../rtl
++incdir+../../../rtl
 
 // RTL
-../rtl/mux4.sv
+../../../rtl/mux4.sv
 
 // Verificacion: interface, paquetes y top
 ../tb/mux4_if.sv
