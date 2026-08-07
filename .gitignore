@@ -102,3 +102,21 @@ syn/work/*.mr
 
 # ===== Libs (los .db son binarios pesados del PDK) =====
 libs/
+
+# ===== Binarios compilados del golden model =====
+uvm_tb/top_verification/golden/test_cpu
+uvm_tb/top_verification/golden/*.o
+uvm_tb/top_verification/golden/a.out
+# Artefactos de VCS del golden model
+uvm_tb/top_verification/sim/simv_golden*
+uvm_tb/top_verification/sim/golden_compile.log
+uvm_tb/top_verification/sim/golden_sim.log
+uvm_tb/top_verification/sim/golden.fsdb
+
+# ===== LEC: variantes numeradas y locks (Formality reejecutado) =====
+lec/FM_INFO*/
+lec/FM_WORK*/
+lec/formality_svf*/
+lec/formality*_svf/
+lec/*.lck
+lec/formality*.log

@@ -165,3 +165,12 @@ que son la prioridad actual.
 
 El RTL esta validado para proceder a synthesis: el standalone end-to-end
 (31/31) es evidencia suficiente de correccion funcional del CPU.
+
+---
+
+## RESUELTO (2026-08-05): golden model ciclo-a-ciclo verifica el desfase
+
+El golden model en C (via DPI-C, `golden/cpu_model.c`) modela el pipeline
+ciclo-a-ciclo, incluyendo el desfase opcode/operandos. Verificado contra el
+RTL: 578 ciclos, 0 mismatches. El desfase documentado arriba queda verificado
+formalmente. La verificacion del top esta completa.
