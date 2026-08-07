@@ -16,7 +16,7 @@ SKY130 y validado con equivalencia logica (Formality).
 ## Estructura del proyecto
 ```
 project/
-├── rtl/ # RTL canonico (fuente para synthesis)
+├── rtl/ # RTL - FUENTE UNICA (verificacion, synthesis y LEC)
 ├── libs/ # Librerias SKY130 (.db) - ignorado en git
 ├── syn/ # Flujo de synthesis (Design Compiler)
 │ ├── scripts/ # setup, read_design, constraints, compile, run_syn
@@ -27,55 +27,40 @@ project/
 │ └── reports/ # equivalence_summary.rpt + status/passing/failing/unmatched
 ├── uvm_tb/ # Verificacion UVM (9 bloques)
 │ └── <bloque>_verification/
-│ ├── rtl/ # RTL del bloque (ver NOTA de duplicacion)
 │ ├── tb/ # Env UVM
-│ ├── sim/ # Makefile, filelist, standalone TB
+│ ├── sim/ # Makefile, filelist (apunta a ../../../rtl/), standalone TB
 │ └── docs/ # Testplan
 │ └── top_verification/
 │ └── golden/ # Golden model ciclo-a-ciclo en C (DPI-C)
 ├── docs/ # Documentacion general
 └── scripts/ # Scripts auxiliares
 ```
-## NOTA IMPORTANTE: duplicacion de RTL (pendiente de consolidar)
+## Fuente única de RTL (Opción A - consolidada)
 
-**Estado actual (Opcion C - temporal):**
-Los RTL existen en DOS lugares:
-1. `rtl/` — copia canonica usada por synthesis y LEC
-2. `uvm_tb/<bloque>_verification/rtl/` — copias usadas por verificacion
+Los RTL viven en un solo lugar: `rtl/`. Es la fuente única usada por
+verificación, synthesis y LEC.
 
-Esto es una duplicacion temporal para desbloquear synthesis rapido. **Riesgo:
-si editas un RTL, debes actualizar AMBAS copias** o divergiran.
+- **Verificación**: los `filelist.f` de cada env apuntan a `../../../rtl/X.sv`
+  (incluyendo `filelist_golden.f` y `filelist_explore.f` del top)
+- **Synthesis**: lee de `rtl/` vía `search_path`
+- **LEC**: lee de `rtl/` como reference
 
-**Pendiente (Opcion A - consolidacion):**
-Migrar a fuente unica: mover todos los RTL a `rtl/`, borrar los
-`uvm_tb/*/rtl/`, y actualizar los `filelist.f` de cada env UVM para apuntar
-a `../../../rtl/<archivo>.sv`. Esto restablece "single source of truth".
+Un fix a un RTL se hace en un solo archivo y lo ven todos los flujos. No hay
+duplicación que sincronizar.
 
-### Checklist para la consolidacion (Opcion A) - PENDIENTE
-
-- [ ] Verificar que `rtl/` tiene la version mas reciente de cada RTL
-      (los ultimos fixes: encoding one-hot, ALU 4 ops, STORE, NOP)
-- [ ] Actualizar los 9 `filelist.f` en `uvm_tb/*_verification/sim/`:
-      cambiar `../../<bloque>_verification/rtl/X.sv` -> `../../../rtl/X.sv`
-- [ ] Actualizar el `filelist.f` del top (referencia varios submodulos)
-- [ ] Actualizar `filelist_golden.f` del golden model (mismas rutas de RTL)
-- [ ] Correr `make regress` en cada env para confirmar que la verificacion
-      sigue funcionando tras el cambio de rutas
-- [ ] Borrar los directorios `uvm_tb/*/rtl/`
-- [ ] Actualizar esta seccion del README
-
-**IMPORTANTE:** mientras la Opcion C este activa, si haces un fix a un RTL,
-COPIALO tambien a `uvm_tb/<bloque>_verification/rtl/` para no perder la
-sincronizacion con verificacion. Nota: el flujo actual (synthesis + LEC) uso
-la copia de `rtl/`, que esta sincronizada con verificacion a la fecha del
-tag v3.0-synthesis-lec.
+**Histórico:** antes existían copias en `uvm_tb/<bloque>_verification/rtl/`
+(Opción C temporal, para desbloquear synthesis rápido). Se consolidaron a
+fuente única, validando que los 9 envs siguen compilando y verificando
+correctamente desde `rtl/` (8 envs Compilacion OK, alu coverage 100%,
+mux4_registered regresión, top golden model 0 mismatches).
 
 ## Flujos
 
 ### Verificacion (UVM)
 ```bash
 cd uvm_tb/<bloque>_verification/sim
-make regress              # env UVM completo
+make compile              # compila el env
+make regress              # regresion completa (random + directed + coverage)
 ./run.sh                  # TB standalone (fase 1)
 ```
 
@@ -117,6 +102,7 @@ Resultado en `lec/reports/`.
   ciclo-a-ciclo (DPI-C, 0 mismatches en 578 ciclos)
 - **Synthesis del top** para SKY130: cierra timing a 100 MHz, 0 violaciones
 - **Equivalencia logica**: netlist == RTL (190/190 SUCCEEDED)
+- **RTL consolidado** a fuente única en `rtl/` (Opción A)
 
 ### Verificacion del top: golden model ciclo-a-ciclo
 El desfase opcode/operandos del pipeline (documentado en
@@ -135,7 +121,6 @@ cross-check contra un RTL-reference independiente (2053 ciclos, 0 mismatches).
 Todos atravesaron verificacion + synthesis + LEC sin alterar la logica.
 
 ### Pendiente (no bloqueante)
-- **Consolidacion RTL** (Opcion A, checklist arriba)
 - **P&R (ICC2) + Signoff (PrimeTime)** si se continua el flujo hasta layout
 
 ## Tags
