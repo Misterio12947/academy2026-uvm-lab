@@ -4,6 +4,16 @@ CPU multiciclo de 3 etapas (FETCH_DECODE → EXECUTE → STORE), verificado con
 UVM y un golden model ciclo-a-ciclo, sintetizado con Design Compiler para
 SKY130 y validado con equivalencia logica (Formality).
 
+> **Ramas de verificacion**
+> Este repo mantiene el mismo entorno UVM sobre dos simuladores, en ramas separadas:
+> - **`main`** — flujo original con **VCS + Verdi** (FSDB, URG, `cm_hier`, `.el`).
+> - **`questa`** — el mismo TB migrado a **Questa / Questa One con UVM 1.2**
+>   (flujo `vlib/vlog/vopt/vsim`, cobertura con `+cover` + UCDB, ondas WLF o Visualizer).
+>
+> El RTL, los env UVM y los testplan son fuente unica compartida; solo cambia el
+> harness de `sim/`. El `testbench.sv` es comun a ambas ramas: el volcado FSDB
+> queda bajo `` `ifdef VCS ``, y en Questa las ondas las gestiona `sim/run.do`.
+
 ## Flujo ASIC front-end completo
 
 | Etapa                 | Herramienta       | Resultado                          | Tag / Evidencia         |
@@ -63,6 +73,63 @@ make compile              # compila el env
 make regress              # regresion completa (random + directed + coverage)
 ./run.sh                  # TB standalone (fase 1)
 ```
+### Verificacion (UVM) — flujo Questa / UVM 1.2  *(rama `questa`)*
+ 
+Flujo clasico de 3 pasos (`vlib` -> `vlog` -> `vopt` -> `vsim`) manejado por
+`Makefile` + `run.do`. UVM 1.2 precompilada (paridad con el baseline de VCS),
+seleccionada apuntando `-L` a la libreria del install.
+ 
+```bash
+cd uvm_tb/<bloque>_verification/sim
+make comp                 # vlib work + vlog (compila design + TB)
+make opt                  # vopt: +cover (instrumentacion) + visibilidad
+make sim  TEST=<test>     # vsim en batch; guarda <test>.ucdb
+make regress              # random + directed + coverage; fusiona y reporta
+make cov                  # (re)genera reportes desde los .ucdb existentes
+make clean                # borra artefactos (work/, *.ucdb, covhtml, ...)
+```
+ 
+Variables (`make <target> VAR=valor`):
+ 
+| Variable     | Default              | Para que sirve                                             |
+| ------------ | -------------------- | ---------------------------------------------------------- |
+| `TEST`       | `alu_regression_test`| Test UVM a correr (`+UVM_TESTNAME`)                        |
+| `SEED`       | `1`                  | Semilla (`-sv_seed`)                                        |
+| `UVM_VERB`   | `UVM_MEDIUM`         | Verbosidad UVM                                             |
+| `WAVE`       | `none`               | Ondas: `none` (rapido) \| `wlf` (clasico) \| `qwavedb` (Visualizer) |
+| `UVM_VER`    | `uvm-1.2`            | Version de UVM (`uvm-1.2` \| `uvm-1.1d` \| `uvm` 1800.2)   |
+| `QUESTA_ROOT`| ruta del install     | Raiz de Questa (ajustar si el install esta en otra ruta)   |
+ 
+**Ondas / debug:**
+```bash
+make opt sim WAVE=wlf      TEST=alu_directed_test   # genera .wlf -> vsim -view vsim.wlf
+make opt sim WAVE=qwavedb  TEST=alu_directed_test   # Visualizer
+make visualizer                                     # abre design.bin + qwave.db
+```
+ 
+**Cobertura:** se instrumenta en `vopt` con `+cover=sbcft`
+(s=statement, b=branch, c=condition, f=fsm, t=toggle), acotada a los modulos
+`ALU` + `testbench` — equivalente al `cm_hier.cfg` de VCS. Cada test guarda su
+UCDB (`coverage save -onexit`, para que el `$finish` de UVM no se coma el
+guardado); `make cov` los fusiona (`vcover merge`), aplica las exclusiones de
+`cov_exclude.do` en modo `viewcov` (equivalente a `urg -elfile`) y emite:
+ 
+- `covhtml/index.html` — reporte HTML
+- `cov_report.txt` — cobertura de codigo
+- `cov_cvg.txt` — cobertura funcional (covergroups)
+**Exclusiones** (holes unreachable-by-design): en `sim/cov_exclude.do`,
+via `coverage exclude` (traduccion del `alu_cov_excludes.el` de URG).
+ 
+**Equivalencias VCS -> Questa (resumen):**
+ 
+| VCS / Verdi                        | Questa / Questa One                          |
+| ---------------------------------- | -------------------------------------------- |
+| `vcs -sverilog -ntb_opts uvm-1.2`  | `vlog -sv -L <uvm-1.2>` + `vopt` + `vsim`    |
+| `-cm line+cond+fsm+tgl+branch`     | `+cover=sbcft` (en `vopt`)                    |
+| `-cm_hier cm_hier.cfg`             | `+cover` acotado a `ALU`/`testbench`          |
+| `+ntb_random_seed=`                | `-sv_seed`                                    |
+| `$fsdbDumpvars` + Verdi            | `log -r /*` (WLF) o `-qwavedb` (Visualizer)   |
+| `urg -elfile alu_cov_excludes.el`  | `coverage exclude` en `viewcov` (`cov_exclude.do`) |
 
 ### Verificacion del top con golden model (DPI-C)
 ```bash
