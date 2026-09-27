@@ -1,6 +1,10 @@
-# ALU UVM Verification
+# ALU UVM Verification — Questa / UVM 1.2
 
 Entorno UVM para verificar el ALU del laboratorio RTL & Verification (Synopsys, Oct 2025).
+
+> **Rama `questa`.** Este README documenta el flujo sobre **Questa / Questa One con
+> UVM 1.2**. La versión con **VCS + Verdi** vive en la rama `main`. El RTL, el env
+> UVM y el testplan son fuente única compartida; solo cambia el harness de `sim/`.
 
 ## Estructura del proyecto
 
@@ -23,64 +27,76 @@ alu_verification/
 │   ├── alu_coverage_seq.sv     # Sequence para cerrar coverage
 │   ├── alu_test.sv             # Tests (base, random, directed, coverage, regression)
 │   ├── alu_test_pkg.sv         # Paquete de tests
-│   └── testbench.sv            # Top-level del TB
+│   └── testbench.sv            # Top-level del TB (dump FSDB bajo `ifdef VCS)
 └── sim/
-    ├── Makefile                # Flujo completo (compile / sim / cov / verdi)
-    ├── filelist.f              # Lista de archivos para VCS
-    └── cm_hier.cfg             # Filtro de instrumentacion (DUT + testbench)
+    ├── Makefile                # Flujo Questa (comp / opt / sim / cov / regress)
+    ├── filelist.f              # Lista de archivos para vlog
+    ├── run.do                  # Script de simulacion (ondas + coverage save)
+    └── cov_exclude.do          # Exclusiones de coverage (viewcov)
 ```
 
 ## Uso
 
+Flujo clásico de 3 pasos: `vlib` → `vlog` → `vopt` → `vsim`.
+
 ```bash
 cd sim/
 
-# Regresion completa: random + directed + coverage + reporte con waivers
-make regress
+# Regresion completa: random + directed + coverage + reporte con exclusiones
+make comp && make opt && make regress
 
 # Test individual
-make compile
+make comp
+make opt
 make sim TEST=alu_directed_test
 make cov
+
+# Debug con ondas
+make opt sim WAVE=wlf      TEST=alu_directed_test   # WLF clasico (vsim -view vsim.wlf)
+make opt sim WAVE=qwavedb  TEST=alu_directed_test   # Visualizer (make visualizer)
 ```
+
+Variables: `TEST`, `SEED`, `UVM_VERB`, `WAVE` (`none`|`wlf`|`qwavedb`),
+`UVM_VER` (`uvm-1.2` por defecto). Ver `make help`.
 
 ## Tests disponibles
 
 | Test                  | Proposito                                                        |
 | --------------------- | ---------------------------------------------------------------- |
-| `alu_random_test`     | 500 transacciones aleatorias                                     |
+| `alu_random_test`     | Transacciones aleatorias                                         |
 | `alu_directed_test`   | Casos borde derivados de la spec                                 |
 | `alu_coverage_test`   | Recorrido exhaustivo para cerrar covergroups                     |
 | `alu_regression_test` | Encadena directed + coverage_seq + random en una sola simulacion |
 
 ## Resultados de coverage
 
-Ultima corrida (regression + coverage + random, 3 tests acumulados):
+Última corrida en Questa (`make regress`: random + directed + coverage, 3 tests
+acumulados en `merged_excl.ucdb`):
 
 | Metrica            | Valor       | Notas                                              |
 | ------------------ | ----------- | -------------------------------------------------- |
-| Transacciones      | 2361 + 1331 + 500 | Regression + coverage + random                |
 | Errores            | 0           | Todos los checks del scoreboard pasan              |
-| `cg_alu`           | **100.00%** | Opcodes ISA, invalid_data, zero, error, ranges     |
-| `cg_edge_cases`    | **100.00%** | Div-by-zero, error->-1, consistencia error/zero    |
+| `cg_alu`           | **100.00%** | Opcodes ISA, invalid_data, zero, error, ranges (33/33 bins) |
 
-### Coverage estructural (filtrado con `-cm_hier` a DUT + testbench)
+### Coverage de código (`+cover=sbcft`, acotado a `ALU` + `testbench`)
 
-| Metrica  | Sin waivers | Con waivers |
-| -------- | ----------- | ----------- |
-| Score    | 81.36%      | ~99-100%    |
-| Line     | 84.62%      | 100%        |
-| Cond     | 100%        | 100%        |
-| Toggle   | 97.50%      | 97.50%      |
-| Branch   | 72.73%      | ~95%        |
-| Assert   | 33.33%      | (excluido)  |
-| Group    | 100%        | 100%        |
+Instrumentación acotada a los módulos del diseño y el TB-top (equivalente al
+`-cm_hier` de VCS): la UVM precompilada y las clases del TB quedan fuera.
+
+| Instancia            | Statements | Branches | Toggles |
+| -------------------- | ---------- | -------- | ------- |
+| `ALU` (dut)          | 100% (15/15) | 100% (7/7) | 100% (36/36) |
+| `testbench`          | 100% (5/5)   | —          | 100% (2/2)   |
+| `alu_if` (vif)       | 100% (9/9)   | —          | 100% (78/78) |
+
+`Cond`: sin bins (los `if` del ALU son de un término → cuentan como branches).
+`FSM` / `Assert`: no aplican (ALU combinacional, sin SVA).
 
 ## Coverage holes conocidos (unreachable-by-design)
 
 Los siguientes holes son **inalcanzables por construccion del diseno**, no por
 gaps del testbench. Se documentan aqui para transparencia y se excluyen via
-waivers (siguiente seccion).
+`cov_exclude.do` (siguiente seccion).
 
 ### 1. `rtl/alu.sv` — Default del `unique case`
 
@@ -96,10 +112,6 @@ end
 DIV, NOP0, LOAD, STORE, NOP1). El `default` existe como buena practica
 defensiva pero no puede alcanzarse en simulacion 2-estados con opcode valido.
 
-**Verificado por**: el `unique case` reporta warning en tiempo de simulacion si
-alguna rama duplica match o si ninguna hace match. Ningun warning fue emitido
-en las 4192 transacciones ejecutadas.
-
 ### 2. `tb/testbench.sv` — Watchdog `uvm_fatal`
 
 ```systemverilog
@@ -110,33 +122,37 @@ end
 ```
 
 **Motivo**: es codigo defensivo del testbench que solo dispara si la simulacion
-se cuelga. Que nunca dispare significa que el env es sano. Excluirlo de
-coverage es equivalente a excluir codigo de manejo de errores del reporte
-final.
+se cuelga. Que nunca dispare significa que el env es sano.
 
-### 3. `uvm_pkg` — Asserts internos de UVM
+### 3. Clases UVM y librería UVM
 
-**Motivo**: la libreria UVM instrumenta asserts internos que no dependen del
-DUT. Estos son ruido de coverage y se filtran con `-cm_hier cm_hier.cfg`.
+**Motivo**: la UVM precompilada (`-L uvm-1.2`) no se instrumenta, y el código de
+las clases del TB (`alu_pkg`, `alu_test_pkg`) queda fuera del `+cover` al acotar
+la instrumentación a `ALU` + `testbench`. No ensucian el reporte.
 
-## Estrategia de waivers
+## Estrategia de exclusiones (waivers)
 
-Los holes documentados se cierran con **pragmas `// VCS coverage off/on`**
-directamente en las regiones inalcanzables:
+En Questa los holes documentados se cierran con **`coverage exclude`** en
+`sim/cov_exclude.do`, aplicado en **report-time** sobre el UCDB fusionado
+(modo `viewcov`), equivalente al `urg -elfile` de VCS:
 
-- **`rtl/alu.sv`**: alrededor del `default` del `unique case`. Aunque tocar
-  el RTL con constructos de verificacion no es ideal, los pragmas son solo
-  comentarios que no afectan sintesis y son la unica forma robusta de excluir
-  holes sin generar el `.el` interactivamente con Verdi.
+```tcl
+coverage exclude -src ../../../rtl/alu.sv   -line 74 75 76 77 78 -comment "..."
+coverage exclude -src ../tb/testbench.sv    -line 55 56 57 58    -comment "..."
+```
 
-- **`tb/testbench.sv`**: alrededor del `initial` del watchdog `uvm_fatal`.
-  Como es codigo de TB (no RTL), es completamente aceptable.
+- **Determinista y versionable**: a diferencia de URG (que rechazaba `.el`
+  escritos a mano por checksums/IDs internos y obligaba a Verdi interactivo),
+  el `coverage exclude` de Questa es texto plano, apto para revisión y CI.
+- **Report-time, no sim-time**: aplicarlas al reportar (no durante la sim)
+  preserva el comentario del waiver y refleja el mismo modelo que `urg -elfile`.
+- **Pragmas `// VCS coverage off/on`**: siguen presentes en el RTL compartido
+  (`rtl/alu.sv`) para la rama `main`/VCS. Questa los ignora (son comentarios),
+  así que la exclusión efectiva en esta rama la hace `cov_exclude.do`.
 
-Alternativa considerada y descartada: `alu_cov_excludes.el`. URG rechaza
-archivos de exclusion escritos a mano por dependencias de checksums e IDs
-internos que requieren Verdi interactivo para generarse correctamente. Los
-pragmas son 100% deterministicos, versionables y adyacentes al codigo que
-excluyen (mejor para revisiones).
+**Nota sobre líneas**: como en cualquier exclude-file por línea, los números
+corresponden al commit actual de `alu.sv` / `testbench.sv`. Si esos archivos
+cambian, ajustar `cov_exclude.do`.
 
 ## Notas de diseno del env
 
@@ -155,18 +171,14 @@ excluyen (mejor para revisiones).
 
 ## Control de versiones
 
-Estructura de commits sugerida para versionar cambios:
+Estructura de commits sugerida para versionar el env en la rama `questa`:
 
 ```bash
-# Commit del env base
-git add rtl/ tb/ sim/Makefile sim/filelist.f sim/cm_hier.cfg
-git commit -m "feat(alu): env UVM completo con coverage funcional al 100%"
+# Commit del harness Questa
+git add sim/Makefile sim/filelist.f sim/run.do sim/cov_exclude.do tb/testbench.sv
+git commit -m "feat(alu): migrar env a Questa - vlib/vlog/vopt/vsim, UVM 1.2, coverage + exclusiones"
 
 # Commit de documentacion
-git add README.md
-git commit -m "docs(alu): documentar resultados de coverage y holes conocidos"
-
-# Commit de waivers
-git add sim/alu_cov_excludes.el
-git commit -m "feat(alu): cerrar coverage estructural al ~100% con waivers"
+git add README.md docs/TESTPLAN.md
+git commit -m "docs(alu): documentar flujo Questa (coverage + exclusiones viewcov)"
 ```

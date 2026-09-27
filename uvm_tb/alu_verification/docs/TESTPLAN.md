@@ -2,8 +2,8 @@
 
 **Bloque:** `alu_verification`
 **Version:** 1.2 (solo 4 operaciones, sin NOP)
-**Herramientas:** VCS V-2023.12-SP2-8, UVM-1.2
-**Estado:** ✅ SIGNED — Score 100% (line, cond, toggle, branch, groups)
+**Herramientas:** Questa 2025.3, UVM-1.2  *(rama `questa`; la corrida original en VCS V-2023.12-SP2-8 vive en `main`)*
+**Estado:** ✅ SIGNED — Score 100% (statement, branch, toggle, groups)
 
 **Change log:**
 - v1.0 (2026-05-XX): version inicial con encoding ISA (op[2:0] utiles, op[3] reservado). Score 99.38%.
@@ -29,7 +29,7 @@ Modulo `ALU` parametrizado por `WIDTH` (default 8), con:
 ### 1.2 Fuera de alcance
 
 - Verificacion del control unit que genera `op` (verificado en `control_verification`)
-- Verificacion de codificaciones invalidas (0000 o multi-hot). La FSM nunca las envia; el default RTL las maneja como defensa (envuelto en pragma coverage off)
+- Verificacion de codificaciones invalidas (0000 o multi-hot). La FSM nunca las envia; el default RTL las maneja como defensa (excluido de coverage, ver §4.3)
 - Timing dinamico (bloque combinacional puro)
 
 ---
@@ -98,7 +98,7 @@ neutro y el datapath ignora el resultado (`selmux2=1` toma memoria en LOAD,
 | REQ-ALU-08  | `zero=1` cuando `out=0` en operaciones aritmeticas                | DIR + SCB + COV | `cp_zero.high`         | **PASS** |
 | REQ-ALU-09  | `zero=0` cuando `out != 0`                                         | RND + SCB + COV | `cp_zero.low`          | **PASS** |
 | REQ-ALU-10  | `error=1` solo en div/0 o `invalid_data`                           | DIR + RND + SCB | `cp_error.high` + scoreboard | **PASS** |
-| REQ-ALU-11  | `error=0` en operaciones validas sin `invalid_data`                | RND + SCB       | `cp_error.low`         | **PASS** |
+| REQ-ALU-11  | `error=0` en operaciones validas sin `invalid_data`                | RND + SCB + COV | `cp_error.low`         | **PASS** |
 
 ### 3.4 Requerimientos estructurales
 
@@ -151,21 +151,41 @@ neutro y el datapath ignora el resultado (`selmux2=1` toma memoria en LOAD,
 | `div_invalid`    | DIV con invalid_data=1                            |
 | `ignore_bins`    | Descarta bins donde `invalid_data=0`             |
 
-### 4.2 Structural coverage — VCS `-cm`
+### 4.2 Structural coverage — Questa `+cover`
 
-Metricas habilitadas: `line + cond + fsm + tgl + branch + assert`.
-Filtrado con `sim/cm_hier.cfg` a solo `ALU` + `testbench`.
+Metricas habilitadas: `+cover=sbcft` (s=statement, b=branch, c=condition,
+f=fsm, t=toggle), instrumentado en `vopt`. Instrumentacion acotada a
+`ALU` + `testbench` (equivalente al `-cm_hier` de VCS); la UVM precompilada
+y el codigo de las clases del TB (`alu_pkg`, `alu_test_pkg`) quedan fuera.
 
-**Meta**: 100% en score `testbench` y `ALU`.
+**Meta**: 100% en `ALU` y `testbench`.
 
-**Resultado actual**: **100% en LINE, COND, TOGGLE, BRANCH** (FSM y ASSERT no aplican en ALU combinacional).
+**Resultado actual** (`merged_excl.ucdb`):
 
-### 4.3 Waivers
+| Instancia      | Statement | Branch | Toggle |
+| -------------- | --------- | ------ | ------ |
+| `ALU` (dut)    | 100%      | 100%   | 100%   |
+| `testbench`    | 100%      | —      | 100%   |
+| `alu_if` (vif) | 100%      | —      | 100%   |
 
-| Archivo         | Ubicacion                     | Justificacion                                    |
-| --------------- | ----------------------------- | ------------------------------------------------ |
-| `rtl/alu.sv`    | `default` del `unique case`   | Puramente defensivo. La FSM siempre envia uno de los 4 opcodes one-hot validos (nunca 0000 ni multi-hot). Existe solo para evitar latches inferidos y como defensa contra corrupcion de X. No se ejecuta en operacion normal. Envuelto en `// VCS coverage off/on`. |
-| `tb/testbench.sv` | Watchdog `uvm_fatal`         | Timeout defensivo. Envuelto en pragma.           |
+`COND`: sin bins (los `if` del ALU son de un termino → cuentan como branches).
+`FSM` / `ASSERT`: no aplican (ALU combinacional, sin SVA).
+
+### 4.3 Waivers / exclusiones
+
+En Questa las exclusiones se aplican con `coverage exclude` desde
+`sim/cov_exclude.do`, en report-time sobre el UCDB fusionado (modo `viewcov`,
+equivalente a `urg -elfile`):
+
+| Ubicacion                       | Justificacion                                    |
+| ------------------------------- | ------------------------------------------------ |
+| `rtl/alu.sv`, `default` del `unique case` (líneas 74-78) | Puramente defensivo. La FSM siempre envia uno de los 4 opcodes one-hot validos (nunca 0000 ni multi-hot). Existe solo para evitar latches inferidos y como defensa contra corrupcion de X. No se ejecuta en operacion normal. |
+| `tb/testbench.sv`, watchdog `uvm_fatal` (líneas 55-58)   | Timeout defensivo; solo dispara si la sim se cuelga. |
+
+> Los pragmas `// VCS coverage off/on` siguen en el RTL compartido (`rtl/alu.sv`)
+> para la rama `main`/VCS; Questa los ignora (son comentarios). La exclusion
+> efectiva en esta rama la hace `cov_exclude.do`. Los numeros de linea
+> corresponden al commit actual; si el RTL/TB cambia, ajustar el `.do`.
 
 ---
 
@@ -196,31 +216,31 @@ Un run del `alu_regression_test` (o del `make regress`) se considera PASS solo s
 
 - [x] **Scoreboard**: `num_errors == 0`
 - [x] **Functional coverage**: `cg_alu` == 100%
-- [x] **Structural coverage**: score `testbench` == 100% en LINE, COND, TOGGLE, BRANCH
+- [x] **Structural coverage**: `ALU` + `testbench` == 100% en STATEMENT, BRANCH, TOGGLE (COND sin bins)
 - [x] **Tests individuales**: `UVM_ERROR: 0` y `UVM_FATAL: 0`
 - [x] **Trazabilidad**: todos los REQ de la seccion 3 en PASS
-- [x] **Waivers**: cada hole con justificacion en la seccion 4.3
+- [x] **Exclusiones**: cada hole con justificacion en la seccion 4.3
 
 ### Comando de sign-off
 
 ```bash
 cd sim/
 make clean
-make regress
+make comp && make opt && make regress
 grep "UVM_ERROR" sim_alu_regression_test.log
-cat cov_report/dashboard.txt
+cat cov_report.txt
 ```
 
 ---
 
 ## 7. Resultados actuales
 
-**Ejecucion:** 2026-07-29
+**Ejecucion:** en Questa 2025.3 (rama `questa`)
 
 - Regresion: 3 tests, **0 errores**
-- Groups: **100%**
-- Line, cond, toggle, branch: **100%**
-- Score total: **100%**
+- Groups: **100%** (`cg_alu`, 33/33 bins)
+- Statement, branch, toggle en `ALU`/`testbench`: **100%**
+- Score total (vista filtrada, post-exclusiones): **100%**
 
 ---
 
@@ -240,4 +260,4 @@ cat cov_report/dashboard.txt
 - **Feedback del revisor:** (1) opcode ALU debe usar los 4 bits en encoding one-hot; (2) la ALU tiene exactamente 4 operaciones, sin NOP; la FSM nunca envia 0000
 - **RTL del DUT:** `rtl/alu.sv`
 - **Env UVM:** `tb/alu_*.sv`
-- **Waivers:** pragmas en `rtl/alu.sv` y `tb/testbench.sv`
+- **Exclusiones:** `sim/cov_exclude.do` (`coverage exclude` en viewcov). Los pragmas `// VCS coverage off/on` permanecen en el RTL compartido para la rama `main`.
