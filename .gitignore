@@ -120,3 +120,18 @@ lec/formality_svf*/
 lec/formality*_svf/
 lec/*.lck
 lec/formality*.log
+
+
+# --- Questa / ModelSim (rama questa) ---
+work/
+transcript
+tr_db.log
+*.wlf
+*.ucdb
+*.vstf
+vish_stacktrace.vstf
+covhtml/
+design.bin
+qwave.db
+qwave.db.dir/
+*.log
