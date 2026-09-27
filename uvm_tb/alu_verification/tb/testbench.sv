@@ -5,7 +5,7 @@
 //   - Instancia interface y DUT
 //   - Publica el vif via config_db
 //   - Lanza run_test()
-//   - Genera dump FSDB para Verdi
+//   - Dump de ondas: FSDB (Verdi/VCS) o gestionado por el simulador (Questa)
 //------------------------------------------------------------------------------
 module testbench;
 
@@ -39,19 +39,22 @@ module testbench;
         run_test();
     end
 
-    // Dump para Verdi
+    // Dump para Verdi: SOLO bajo VCS (VCS define el macro `VCS automaticamente).
+    // En Questa el volcado lo maneja sim/run.do:
+    //   WAVE=wlf      -> log -r /*        (waveform clasico .wlf)
+    //   WAVE=qwavedb  -> vsim -qwavedb    (Visualizer / qwave.db)
+`ifdef VCS
     initial begin
         $fsdbDumpfile("waves.fsdb");
         $fsdbDumpvars(0, testbench);
     end
+`endif
 
     // Watchdog: previene simulaciones infinitas si algo se cuelga.
-    // Excluido de coverage: solo se ejecuta si el env falla, no debe contar.
-    // VCS coverage off
+    // Excluido de coverage (ver sim/cov_exclude.do): solo corre si el env falla.
     initial begin
         #500us;
         `uvm_fatal("TB", "Watchdog: la simulacion excedio 500us")
     end
-    // VCS coverage on
 
 endmodule
